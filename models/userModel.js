@@ -1,7 +1,42 @@
 "use strict";
-const pool = require("../database/db");
-const promisePool = pool.promise();
+const db = require("../database/db.js");
+const Sequelize = require("Sequelize");
 
+
+
+// define the table "user"
+const User = db.define("user", {
+
+  name: {
+    type: Sequelize.STRING(),
+    field: "name"
+    allowNull: false,
+  }
+  password: {
+    type: Sequelize.STRING(),
+    field: "password"
+    allowNull: false,
+  }
+  email: {
+    type: Sequelize.STRING(),
+    field: "email"
+    allowNull: false,
+  }
+  role: {
+    type: Sequelize.INT(),
+    field: "role"
+    allowNull: false,
+  }
+  score: {
+    type: Sequelize.INT(),
+    field: "score"
+    allowNull: false,
+  }
+});
+
+module.export = User;
+
+/*
 const getAllUsers = async () => {
   try {
     const [rows] = await promisePool.query("SELECT * FROM wop_user");
@@ -62,6 +97,7 @@ const updateUser = async (body, user) => {
     console.error("error", e.message);
   }
 }
+*/
 
 module.exports = {
   getUser,

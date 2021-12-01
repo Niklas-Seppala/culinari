@@ -1,6 +1,7 @@
 "use strict";
 const express = require("express");
 const app = express();
+const Sequelize = require("Sequelize");
 
 require("dotenv").config()
 
@@ -17,8 +18,8 @@ const options = {
 };
 
 
-const catRouter = require("./routes/catRouter");
-
+// sync the database schema with the defined models
+Sequelize.sync();
 
 const userRouter = require("./routes/userRouter");
 
@@ -28,7 +29,6 @@ const pictureRouter = require("./routes/pictureRouter");
 const ingredientRouter = require("./routes/ingredientRouter");
 
 const passport = require("./utils/pass.js");
-
 const authRoute = require("./routes/authRoute.js");
 
 console.log(`Starting local port: ${process.env.HTTP_PORT} https port: ${process.env.HTTPS_PORT} port: ${process.env.PORT}`)
