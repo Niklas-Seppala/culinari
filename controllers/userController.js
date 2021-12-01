@@ -1,9 +1,7 @@
 "use strict";
 const {body, validationResult} = require("express-validator");
 // userController
-const userModel = require("../models/userModel");
-
-const users = userModel.users;
+const User = require("../models/userModel");
 
 
 const hide_pass = users => users.map(u => {
@@ -13,8 +11,7 @@ const hide_pass = users => users.map(u => {
 
 
 const user_list_get = async (req, res) => {
-    const users = await userModel.getAllUsers();
-    console.log(users, typeof users)
+    const users = await User.findAll();
     res.json(hide_pass(users));
 };
 

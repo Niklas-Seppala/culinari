@@ -1,35 +1,44 @@
-"use strict";
-const Sequelize = require("sequelize");
+"use strict"
 
-const mysql = require("mysql2");
-require("dotenv").config();
+//db.sync();
+const sequelize = require("./sequelize_init.js");
+console.log("ASSOCIATE")
 
-// initialize the database connection using the Sequelize library
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
-  host: process.env.DB_HOST,
-  dialect: process.env.DB_TYPE,
+//const Comment = require("../models/commentModel.js");
+//const Ingredient = require("../models/ingredientModel.js");
+//const Picture = require("../models/pictureModel.js");
 
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000
-  },
 
+//Recipe.belongsTo(User);
+
+
+
+const Recipe = require("../models/recipeModel.js");
+const User = require("../models/userModel.js");
+const Comment = require("../models/commentModel.js");
+const Like = require("../models/likeModel.js");
+const Picture = require("../models/pictureModel.js");
+const Ingredient = require("../models/ingredientModel.js");
+console.log("Recipe is:", Recipe)
+
+// define relations
+User.hasMany(Recipe, {foreignKey: "owner_id"});
+User.hasMany(Comment, {foreignKey: "user_id"});
+User.hasMany(Like, {foreignKey: "user_id"});
+
+Recipe.hasMany(Ingredient, {foreignKey: "recipe_id"});
+Recipe.hasMany(Picture, {foreignKey: "recipe_id"});
+
+sequelize.sync({force: process.env.}).then(() => {
+    console.log("DATABASE SYNCED");
 });
 
 
-
-/*
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
-*/
-
-
-module.exports = db;
+module.exports = {
+    User,
+    Recipe,
+    Comment,
+    Like,
+    Picture,
+    Ingredient
+}

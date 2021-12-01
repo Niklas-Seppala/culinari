@@ -1,25 +1,30 @@
 "use strict";
-const db = require("../database/db.js");
-const Sequelize = require("Sequelize");
+const {Sequelize, Model} = require("sequelize");
+const sequelize = require("../database/sequelize_init.js");
 
 
 // define the table "comment"
-const Comment = db.define("comment", {
+class Comment extends Model {};
+Comment.init( {
     recipe_id: {
-        type: Sequelize.INTEGER(),
+        type: Sequelize.INTEGER,
         field: "recipe_id",
         allowNull: false
-    }
+    },
     author_id: {
-        type: Sequelize.INTEGER(),
+        type: Sequelize.INTEGER,
         field: "author_id",
         allowNull: false
-    }
+    },
     text: {
-        type: Sequelize.STRING(),
+        type: Sequelize.STRING,
         field: "text",
         allowNull: false
     }
-})
+}, 
+{
+  sequelize,
+  modelName: "comment"
+});
 
-module.export = Comment
+module.exports = Comment;

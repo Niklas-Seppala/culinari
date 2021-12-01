@@ -1,34 +1,34 @@
 "use strict";
-const db = require("../database/db.js");
-const Sequelize = require("Sequelize");
-
+const {Sequelize, Model} = require("sequelize");
+const sequelize = require("../database/sequelize_init.js");
 
 // define the table "recipe"
-const Recipe = db.define("recipe", {
+class Recipe extends Model {};
+Recipe.init( {
     name: {
-        type:Sequelize.STRING(),
+        type:Sequelize.STRING,
         field: "name",
         allowNull: false
-    }
+    },
     desc: {
-        type:Sequelize.STRING(),
+        type:Sequelize.STRING,
         field: "desc",
         allowNull: false
-    }
-    date: {
-        type:Sequelize.BIGINT(),
-        field: "date",
-        allowNull: false
-    }
+    },
     owner: {
-        type:Sequelize.INT(),
-        field: "owner",
+        type:Sequelize.INTEGER,
+        field: "owner_id",
         allowNull: false
-    }
+    },
     forked_from: {
-        type:Sequelize.INT(),
+        type:Sequelize.INTEGER,
         field: "forked_from"
     }
+}, 
+{
+  sequelize,
+  modelName: "recipe"
 });
 
-module.export = Recipe;
+
+module.exports = Recipe;

@@ -11,7 +11,7 @@ const userController = require("../controllers/userController");
 
 router.route("/")
     .get(userController.user_list_get)
-    .put(
+    /*.put(
         body("name").isLength({min: 3}).trim().escape(),
         body("email").isEmail().trim().escape(),
         body("passwd").matches(/^(?=.*[a-z])(?=.*[A-Z]).*$/).trim().escape(),
@@ -20,7 +20,7 @@ router.route("/")
     )
     .delete((req, res) => {
         res.send("With this endpoint you can delete users.");
-    });
+    });*/
     
 router.get("/token", userController.checkToken);
 router.route("/:userId").get(userController.user_get)

@@ -1,7 +1,7 @@
 "use strict";
 const express = require("express");
 const app = express();
-const Sequelize = require("Sequelize");
+
 
 require("dotenv").config()
 
@@ -18,8 +18,11 @@ const options = {
 };
 
 
+
 // sync the database schema with the defined models
-Sequelize.sync();
+
+const sequelize = require("./database/sequelize_init.js");
+const db = require("./database/db");
 
 const userRouter = require("./routes/userRouter");
 
@@ -40,6 +43,7 @@ app.use(passport.initialize())
 app.enable("trust proxy");
 app.use("/auth", authRoute);
 
+
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 if (process.env.NODE_ENV === "production") {
     console.log("Node env prod")
@@ -49,6 +53,8 @@ if (process.env.NODE_ENV === "production") {
     console.log("Node env localhost")
     require("./utils/localhost")(app, process.env.HTTPS_PORT, process.env.HTTP_PORT, options);
 }
+
+app.use("/user", userRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello Secure World!");
@@ -66,10 +72,10 @@ app.use((err, req, res, next) => {
 
 
 
-app.use("/recipe", passport.authenticate("jwt", {session: false}, recipeRouter));
-app.use("/comment", passport.authenticate("jwt", {session: false}, commentRouter));
-app.use("/picture", passport.authenticate("jwt", {session: false}, pictureRouter));
-app.use("/ingredient", passport.authenticate("jwt", {session: false}, ingredientRouter));
-app.use("/user", passport.authenticate("jwt", {session: false}), userRouter);
-app.use("/thumbnails", express.static("thumbnails"));
+//app.use("/recipe", passport.authenticate("jwt", {session: false}, recipeRouter));
+//app.use("/comment", passport.authenticate("jwt", {session: false}, commentRouter));
+//app.use("/picture", passport.authenticate("jwt", {session: false}, pictureRouter));
+//app.use("/ingredient", passport.authenticate("jwt", {session: false}, ingredientRouter));
+//app.use("/user", passport.authenticate("jwt", {session: false}), userRouter);
+//app.use("/thumbnails", express.static("thumbnails"));
 

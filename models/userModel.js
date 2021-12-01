@@ -1,40 +1,46 @@
 "use strict";
-const db = require("../database/db.js");
-const Sequelize = require("Sequelize");
+const {Sequelize, Model} = require("sequelize");
+const sequelize = require("../database/sequelize_init.js");
 
-
+//const Model = Sequelize.Model;
 
 // define the table "user"
-const User = db.define("user", {
-
+class User extends Model {};
+User.init({
   name: {
-    type: Sequelize.STRING(),
-    field: "name"
+    type: Sequelize.STRING,
+    field: "name",
     allowNull: false,
-  }
+  },
   password: {
-    type: Sequelize.STRING(),
-    field: "password"
+    type: Sequelize.STRING,
+    field: "password",
     allowNull: false,
-  }
+  },
   email: {
-    type: Sequelize.STRING(),
-    field: "email"
+    type: Sequelize.STRING,
+    field: "email",
     allowNull: false,
-  }
+  },
   role: {
-    type: Sequelize.INT(),
-    field: "role"
+    type: Sequelize.INTEGER,
+    field: "role",
     allowNull: false,
-  }
+  },
   score: {
-    type: Sequelize.INT(),
-    field: "score"
+    type: Sequelize.INTEGER,
+    field: "score",
     allowNull: false,
   }
+}, {
+  sequelize,
+  modelName: "user"
 });
 
-module.export = User;
+
+module.exports = User;
+
+
 
 /*
 const getAllUsers = async () => {
@@ -98,7 +104,7 @@ const updateUser = async (body, user) => {
   }
 }
 */
-
+/*
 module.exports = {
   getUser,
   getUserLogin,
@@ -106,3 +112,4 @@ module.exports = {
   addUser,
   updateUser
 };
+*/
