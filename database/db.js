@@ -22,6 +22,7 @@ const User = require("../models/userModel.js");
 const Comment = require("../models/commentModel.js");
 const Like = require("../models/likeModel.js");
 const Ingredient = require("../models/ingredientModel.js");
+const Step = require("../models/stepModel.js");
 
 // define relations
 User.hasMany(Recipe, {as: fkName(Recipe), foreignKey: "owner_id"});
@@ -30,6 +31,7 @@ User.hasMany(Like, {as: fkName(Like), foreignKey: "user_id"});
 
 Recipe.hasMany(Ingredient, {as: fkName(Ingredient), foreignKey: "recipe_id"});
 Recipe.hasMany(Picture, {as: fkName(Picture), foreignKey: "recipe_id"});
+Recipe.hasMany(Step, {as: fkName(Step), foreignKey: "recipe_id"});
 
 const forceUpdate = process.env.DB_FORCE_UPDATE == 1;
 const alterUpdate = process.env.DB_ALTER_UPDATE == 1;
@@ -73,12 +75,22 @@ const sync = async () => {
                         owner_id: user.id
                     });
 
+
                     // add pictures
                     for (var k = 0; k < 3; k++) {
                         const picture = await Picture.create({
                             recipe_id: recipe.id,
                             filename: testPictures[Math.floor(Math.random() * testPictures.length)],
-                            order:i
+                            order:k
+                        });
+                    }
+
+
+                    for (var l = 0; l < 4; l++) {
+                        const step = await Step.create({
+                            content: faker.lorem.sentences().substring(0, 250),
+                            recipe_id: recipe.id,
+                            order: l,
                         });
                     }
                 }

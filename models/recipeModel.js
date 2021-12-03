@@ -2,6 +2,8 @@
 const {Sequelize, Model} = require("sequelize");
 const sequelize = require("../database/sequelize_init.js");
 const Picture = require("./pictureModel.js");
+const Ingredient = require("./ingredientModel.js");
+const Step = require("./stepModel.js");
 
 const fkName = require("../utils/fkName.js");
 
@@ -33,11 +35,21 @@ Recipe.init( {
   modelName: sequelize._TABLE_NAME_PREFIX+"recipe"
 });
 
-Recipe.addScope("includePictures", {
+Recipe.addScope("includeForeignKeys", {
     include: [{
         attributes: ["recipe_id", "filename", "order"],
         model: Picture,
         as: fkName(Picture)
+    }],
+    include: [{
+        attributes: ["name", "amount", "unit"],
+        model: Ingredient,
+        as: fkName(Ingredient)
+    }],
+    include: [{
+        attributes: ["content", "order"],
+        model: Step,
+        as: fkName(Step)
     }]
 });
 
