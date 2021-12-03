@@ -1,6 +1,9 @@
 "use strict";
 const {Sequelize, Model} = require("sequelize");
 const sequelize = require("../database/sequelize_init.js");
+const Picture = require("./pictureModel.js");
+
+const fkName = require("../utils/fkName.js");
 
 // define the table "recipe"
 class Recipe extends Model {};
@@ -15,7 +18,7 @@ Recipe.init( {
         field: "desc",
         allowNull: false
     },
-    owner: {
+    owner_id: {
         type:Sequelize.INTEGER,
         field: "owner_id",
         allowNull: false
@@ -27,8 +30,15 @@ Recipe.init( {
 }, 
 {
   sequelize,
-  modelName: "recipe"
+  modelName: sequelize._TABLE_NAME_PREFIX+"recipe"
 });
 
+Recipe.addScope("includePictures", {
+    include: [{
+        attributes: ["recipe_id", "filename", "order"],
+        model: Picture,
+        as: fkName(Picture)
+    }]
+});
 
 module.exports = Recipe;

@@ -15,5 +15,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   }
 });
 
+sequelize._TABLE_NAME_PREFIX = "culinari_";
+
 console.log("DB CALLED NOW");
 module.exports = sequelize;

@@ -54,7 +54,6 @@ if (process.env.NODE_ENV === "production") {
     require("./utils/localhost")(app, process.env.HTTPS_PORT, process.env.HTTP_PORT, options);
 }
 
-app.use("/user", userRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello Secure World!");
@@ -72,10 +71,12 @@ app.use((err, req, res, next) => {
 
 
 
-//app.use("/recipe", passport.authenticate("jwt", {session: false}, recipeRouter));
-//app.use("/comment", passport.authenticate("jwt", {session: false}, commentRouter));
-//app.use("/picture", passport.authenticate("jwt", {session: false}, pictureRouter));
-//app.use("/ingredient", passport.authenticate("jwt", {session: false}, ingredientRouter));
-//app.use("/user", passport.authenticate("jwt", {session: false}), userRouter);
-//app.use("/thumbnails", express.static("thumbnails"));
+app.use("/user", userRouter); // auth this too?
+
+app.use("/recipe",recipeRouter);
+app.use("/comment", commentRouter);
+app.use("/picture", pictureRouter);
+app.use("/ingredient",ingredientRouter);
+app.use("/user", userRouter);
+app.use("/thumbnails", express.static("thumbnails"));
 

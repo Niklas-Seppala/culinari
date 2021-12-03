@@ -28,7 +28,7 @@ Ingredient.init( {
 }, 
 {
   sequelize,
-  modelName: "ingredient"
+  modelName: sequelize._TABLE_NAME_PREFIX+"ingredient"
 });
 
 module.exports = Ingredient;

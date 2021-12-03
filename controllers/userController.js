@@ -2,10 +2,12 @@
 const {body, validationResult} = require("express-validator");
 // userController
 const User = require("../models/userModel");
+const Recipe = require("../models/recipeModel");
 
 
 const hide_pass = users => users.map(u => {
-    delete u.password;
+    console.log(u);
+    delete u.dataValues.password;
     return u;
 });
 
@@ -17,8 +19,11 @@ const user_list_get = async (req, res) => {
 
 const user_get = async (req, res) => {
     let userId = req.params.userId;
-    const users = await userModel.getUser(userId);
-    return res.json(hide_pass(users)[0]);
+
+    const user = await User.scope("includeRecipes").findOne({where: {id: userId}});
+    //return res.json(hide_pass(user)[0]);
+
+    return res.json(hide_pass([user])[0]);
 };
 
 const user_update = async (req, res) => {

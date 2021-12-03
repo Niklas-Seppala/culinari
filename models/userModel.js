@@ -2,6 +2,9 @@
 const {Sequelize, Model} = require("sequelize");
 const sequelize = require("../database/sequelize_init.js");
 
+const fkName = require("../utils/fkName.js");
+const Recipe = require("../models/recipeModel");
+
 //const Model = Sequelize.Model;
 
 // define the table "user"
@@ -34,9 +37,20 @@ User.init({
   }
 }, {
   sequelize,
-  modelName: "user"
+  modelName: sequelize._TABLE_NAME_PREFIX+"user",
+  defaultScope: {
+    attributes: { exclude: ["password"] },
+  },
 });
 
+User.addScope("includeRecipes", {
+
+    include: [{
+        attributes: {exclude: ["password"],include: ["name", "desc", "owner_id", "forked_from"]},
+        model: Recipe,
+        as: fkName(Recipe)
+    }]
+});
 
 module.exports = User;
 
@@ -61,17 +75,7 @@ const getUser = async(userId) => {
   }
 }
 
-const getUserLogin = async (params) => {
-  console.log("getUserLogin params", params);
-  try {
-    const [rows] = await promisePool.execute(
-        "SELECT * FROM wop_user WHERE email = ?;",
-        params);
-    return rows;
-  } catch (e) {
-    console.log("error", e.message);
-  }
-};
+
 
 const addUser = async (params) => {
 

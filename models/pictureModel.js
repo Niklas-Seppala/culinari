@@ -6,11 +6,6 @@ const sequelize = require("../database/sequelize_init.js");
 // define the table "picture"
 class Picture extends Model {};
 Picture.init( {
-    name: {
-        type:Sequelize.STRING,
-        field: "name",
-        allowNull: false
-    },
     recipe_id: {
         type: Sequelize.INTEGER,
         field: "recipe_id",
@@ -30,7 +25,9 @@ Picture.init( {
 }, 
 {
   sequelize,
-  modelName: "picture"
+  modelName: sequelize._TABLE_NAME_PREFIX+"picture"
 });
+
+
 
 module.exports = Picture;

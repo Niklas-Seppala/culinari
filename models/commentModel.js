@@ -24,7 +24,7 @@ Comment.init( {
 }, 
 {
   sequelize,
-  modelName: "comment"
+  modelName: sequelize._TABLE_NAME_PREFIX+"comment"
 });
 
 module.exports = Comment;

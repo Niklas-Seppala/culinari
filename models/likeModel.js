@@ -19,7 +19,7 @@ Like.init( {
 },
 {
     sequelize,
-    modelName: "like"
+    modelName: sequelize._TABLE_NAME_PREFIX+"like"
 }
 );
 

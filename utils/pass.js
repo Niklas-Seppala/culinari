@@ -1,22 +1,35 @@
 "use strict";
 const passport = require("passport");
 const Strategy = require("passport-local").Strategy;
-const { getUserLogin } = require("../models/userModel");
+
 
 const passportJWT = require("passport-jwt");
 const JWTStrategy   = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 
+const User = require("../models/userModel");
+
 const bcryptjs = require("bcryptjs");
 
 // local strategy for username password login
 
+const getUserLogin = async (username) => {
+  console.log("getUserLogin username", username);
+  try {
+    const user = await User.findOne({where: {email: username}});
+    return user;
+  } catch (e) {
+    console.log("error", e.message);
+  }
+};
+
+
 passport.use(new Strategy(
     async (username, password, done) => {
-      const params = [username];
+      
       try {
-        console.log("Params", params.username)
-        const [user] = await getUserLogin(params);
+
+        const user = await getUserLogin(username);
 
         const salt = bcryptjs.genSaltSync(10);
         const hash = bcryptjs.hashSync(password, salt);
