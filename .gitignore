@@ -1,6 +1,3 @@
-#vscode
-**/.vscode/
-
 # Logs
 logs
 *.log
@@ -119,3 +116,17 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+uploads/*
+!uploads/.gitkeep
+thumbnails/*
+!thumbnails/.gitkeep
+
+.env
+
+#wop-ui/*
+
+ssl-key.pem 
+ssl-cert.pem
+certrequest.csr
