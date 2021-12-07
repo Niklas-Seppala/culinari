@@ -44,15 +44,11 @@ Recipe.addScope('includeForeignKeys', {
       model: Picture,
       as: fkName(Picture),
     },
-  ],
-  include: [
     {
       attributes: ['name', 'amount', 'unit'],
       model: Ingredient,
       as: fkName(Ingredient),
     },
-  ],
-  include: [
     {
       attributes: ['content', 'order'],
       model: Step,

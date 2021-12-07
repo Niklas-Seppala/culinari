@@ -15,7 +15,15 @@ const bcryptjs = require('bcryptjs');
 const getUserLogin = async username => {
   console.log('getUserLogin username', username);
   try {
-    const user = await User.findOne({ where: { email: username } });
+    const user = await User.findOne({
+        where: { email: username },
+        attributes: {
+            include: ['password']
+        }
+    });
+    console.log(user)
+
+
     return user;
   } catch (e) {
     console.log('error', e.message);
@@ -29,7 +37,7 @@ passport.use(
 
       const salt = bcryptjs.genSaltSync(10);
       const hash = bcryptjs.hashSync(password, salt);
-
+      console.log("user", user, password, hash)
       console.log(
         'Local strategy',
         user,
