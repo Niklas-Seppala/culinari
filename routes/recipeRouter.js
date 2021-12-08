@@ -49,14 +49,16 @@ const upload = multer({ dest: "./uploads/",
 
 
 
-
 router.route("/")
     .get(recipeController.recipe_list_get)
     .post(passport.authenticate('jwt', { session: false }),recipeController.recipe_post) // TODO: validation
 
 router.route("/:recipeId").get(recipeController.recipe_get);
+
+
 router.route("/:recipeId/picture")
     .post(
+        passport.authenticate('jwt', { session: false }),
         upload.array("pictures", 10),
         body("pictures").custom((recipe, { req, location, path }) => {
           return req.file != null;

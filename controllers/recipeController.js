@@ -1,6 +1,8 @@
 'use strict';
 
 const Recipe = require('../models/recipeModel.js');
+const Ingredient = require('../models/ingredientModel.js');
+const Step = require('../models/stepModel.js');
 const Picture = require('../models/pictureModel.js');
 
 /**
@@ -33,6 +35,39 @@ const recipe_post = async (req, res) => {
         desc: req.body.desc,
         owner_id: userId,
     });
+
+    let stepsData = [];
+
+    if(!req.body.steps) {
+        res.status(400).json(error: "No steps given");
+    }
+
+    req.body.steps.forEach((step, index) => {
+        console.log(step, index);
+        stepsData.push({
+            order: step.order,
+            content: step.content,
+            recipe_id: recipe.id
+        });
+
+    });
+    await Step.bulkCreate(stepsData);
+
+    let ingredientsData = [];
+
+    if(!req.body.ingredients) {
+        res.status(400).json(error: "No ingredients given");
+    }
+    req.body.ingredients.forEach((ingredient, index) => {
+        ingredientsData.push({
+            name: ingredient.name,
+            amount: ingredient.amount,
+            unit: ingredient.unit,
+            recipe_id: recipe.id
+        });
+
+    });
+    await Ingredient.bulkCreate(ingredientsData);
 
     return res.json(recipe)
 };
