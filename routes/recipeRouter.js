@@ -10,6 +10,7 @@ router.route('/').get(recipeController.recipe_list_get);
 
 
 const passport = require('../utils/pass.js');
+const { checkRelatedExists } = require('../utils/customValidators.js');
 
 
 const cors = require("cors");
@@ -51,7 +52,12 @@ const upload = multer({ dest: "./uploads/",
 
 router.route("/")
     .get(recipeController.recipe_list_get)
-    .post(passport.authenticate('jwt', { session: false }),recipeController.recipe_post) // TODO: validation
+    .post(
+        passport.authenticate('jwt', { session: false }),
+        checkRelatedExists("steps"),
+        checkRelatedExists("ingredients"),
+        recipeController.recipe_post
+    ) // TODO: validation
 
 router.route("/:recipeId").get(recipeController.recipe_get);
 

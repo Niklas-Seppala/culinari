@@ -1,4 +1,6 @@
 'use strict';
+const { body, validationResult } = require('express-validator');
+
 
 const Recipe = require('../models/recipeModel.js');
 const Ingredient = require('../models/ingredientModel.js');
@@ -26,9 +28,16 @@ const recipe_get = async (req, res) => {
 
 const recipe_post = async (req, res) => {
     // TODO: validation
+    const errors = validationResult(req);
+
     console.log(req.body);
     console.log("user is:",req.user)
+
     const userId = req.user.dataValues.id;
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
     const recipe = await Recipe.create({
         name: req.body.name,
@@ -36,12 +45,8 @@ const recipe_post = async (req, res) => {
         owner_id: userId,
     });
 
+
     let stepsData = [];
-
-    if(!req.body.steps) {
-        res.status(400).json(error: "No steps given");
-    }
-
     req.body.steps.forEach((step, index) => {
         console.log(step, index);
         stepsData.push({
@@ -51,23 +56,24 @@ const recipe_post = async (req, res) => {
         });
 
     });
-    await Step.bulkCreate(stepsData);
+
 
     let ingredientsData = [];
-
-    if(!req.body.ingredients) {
-        res.status(400).json(error: "No ingredients given");
-    }
     req.body.ingredients.forEach((ingredient, index) => {
         ingredientsData.push({
             name: ingredient.name,
-            amount: ingredient.amount,
-            unit: ingredient.unit,
+            amount: ingredient.amount || 0.0,
+            unit: ingredient.unit || "",
             recipe_id: recipe.id
         });
 
     });
+
+
     await Ingredient.bulkCreate(ingredientsData);
+    await Step.bulkCreate(stepsData);
+
+
 
     return res.json(recipe)
 };
@@ -75,9 +81,8 @@ const recipe_post = async (req, res) => {
 const recipe_picture_post = async (req, res) => {
     const recipeId = req.params.recipeId;
     let recipe = await Recipe.scope('includeForeignKeys').findOne({
-      where: { id: recipeId },
+      where: { id: recipeId, owner_id: req.user.id },
     });
-    // TODO: validation
 
     if (!recipe) {
         return res.status(404).json({errors: ["Recipe not found"]});
