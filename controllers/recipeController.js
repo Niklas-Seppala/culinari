@@ -23,11 +23,15 @@ const recipe_get = async (req, res) => {
   });
   console.log('recipeId', recipeId);
   console.log('recipe', recipe);
+  if(!recipe) {
+    return res.status(400).json({error: "Recipe not found"});
+  }
+
   return res.json(recipe);
 };
 
 const recipe_post = async (req, res) => {
-    // TODO: validation
+
     const errors = validationResult(req);
 
     console.log(req.body);
@@ -81,7 +85,7 @@ const recipe_post = async (req, res) => {
 const recipe_picture_post = async (req, res) => {
     const recipeId = req.params.recipeId;
     let recipe = await Recipe.scope('includeForeignKeys').findOne({
-      where: { id: recipeId, owner_id: req.user.id },
+      where: { id: recipeId, owner_id: req.user.dataValues.id },
     });
 
     if (!recipe) {
@@ -117,7 +121,15 @@ const recipe_picture_post = async (req, res) => {
 
 const recipe_update = async (req, res) => {};
 
-const recipe_delete = async (req, res) => {};
+const recipe_delete = async (req, res) => {
+    const recipeId = req.params.recipeId;
+    let recipe = await Recipe.scope('includeForeignKeys').findOne({
+      where: { id: recipeId, owner_id: req.user.dataValues.id },
+    });
+
+    await recipe.destroy();
+    return res.json({msg: "Recipe deleted"});
+};
 
 module.exports = {
   recipe_list_get,

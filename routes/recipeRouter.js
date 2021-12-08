@@ -54,12 +54,19 @@ router.route("/")
     .get(recipeController.recipe_list_get)
     .post(
         passport.authenticate('jwt', { session: false }),
+        body('name').notEmpty().trim().escape(),
+        body('desc').notEmpty().trim().escape(),
         checkRelatedExists("steps"),
         checkRelatedExists("ingredients"),
         recipeController.recipe_post
-    ) // TODO: validation
+    )
 
-router.route("/:recipeId").get(recipeController.recipe_get);
+router.route("/:recipeId")
+    .get(recipeController.recipe_get)
+    .delete(
+        passport.authenticate('jwt', { session: false }),
+        recipeController.recipe_delete
+    )
 
 
 router.route("/:recipeId/picture")
