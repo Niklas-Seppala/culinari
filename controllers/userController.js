@@ -31,7 +31,7 @@ const user_update = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const cat = await userModel.updateUser(req.body, req.user);
+  const user = await userModel.updateUser(req.body, req.user);
 
   return res.json({ message: 'User updated!' });
 };
