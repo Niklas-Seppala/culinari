@@ -63,10 +63,62 @@ router.route("/")
 
 router.route("/:recipeId")
     .get(recipeController.recipe_get)
+    .put(
+        passport.authenticate('jwt', { session: false }),
+        body('name').notEmpty().trim().escape(),
+        body('desc').notEmpty().trim().escape(),
+        recipeController.recipe_update
+    )
     .delete(
         passport.authenticate('jwt', { session: false }),
         recipeController.recipe_delete
     )
+
+// add ingredient to existing recipe
+router.route("/:recipeId/ingredient")
+    .post(
+        passport.authenticate('jwt', { session: false }),
+        body('name').notEmpty().trim().escape(),
+        body('amount').notEmpty().trim().escape(),
+        body('unit').notEmpty().trim().escape(),
+        recipeController.recipe_ingredient_add
+    )
+
+// add step to existing recipe
+router.route("/:recipeId/step")
+    .post(
+        passport.authenticate('jwt', { session: false }),
+        body('order').notEmpty().trim().escape(),
+        body('content').notEmpty().trim().escape(),
+        recipeController.recipe_step_add
+    )
+
+router.route("/:recipeId/ingredient/:ingredientId")
+    .put(
+        passport.authenticate('jwt', { session: false }),
+        body('name').notEmpty().trim().escape(),
+        body('amount').notEmpty().trim().escape(),
+        body('unit').notEmpty().trim().escape(),
+        recipeController.recipe_ingredient_update
+    )
+    .delete(
+        passport.authenticate('jwt', { session: false }),
+        recipeController.recipe_ingredient_delete
+    )
+
+router.route("/:recipeId/step/:stepId")
+    .put(
+        passport.authenticate('jwt', { session: false }),
+        body('order').notEmpty().trim().escape(),
+        body('content').notEmpty().trim().escape(),
+        recipeController.recipe_step_update
+    )
+    .delete(
+        passport.authenticate('jwt', { session: false }),
+        recipeController.recipe_step_delete
+    )
+
+
 
 
 router.route("/:recipeId/picture")
