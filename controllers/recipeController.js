@@ -1,6 +1,7 @@
 'use strict';
 const { body, validationResult } = require('express-validator');
 
+const { unlink } = require('fs');
 
 const Recipe = require('../models/recipeModel.js');
 const Ingredient = require('../models/ingredientModel.js');
@@ -118,6 +119,38 @@ const recipe_picture_post = async (req, res) => {
 
     
 };
+
+const recipe_picture_delete = async (req, res) => {
+    const recipeId = req.params.recipeId;
+    const pictureId = req.params.pictureId;
+    let recipe = await Recipe.scope('includeForeignKeys').findOne({
+      where: { id: recipeId, owner_id: req.user.dataValues.id },
+    });
+
+    if (!recipe) {
+        return res.status(404).json({errors: ["Recipe not found"]});
+    }
+
+    const picture = await Picture.findOne({
+        where: {id: pictureId, recipe_id: recipeId}
+    });
+
+    if(!picture) {
+        return res.status(404).json({errors: ["Picture not found"]});
+    }
+
+    // delete the file itself first
+    unlink(picture.dataValues.filename, (err) => {
+        if(err) {
+            throw err;
+        }
+    });
+
+    // delete the database entry
+    await picture.destroy();
+
+    return res.json({msg: "Picture deleted succesfully"});
+}
 
 const recipe_update = async (req, res) => {
     const errors = validationResult(req);
@@ -359,6 +392,7 @@ const recipe_step_add = async (req,res) => {
 module.exports = {
   recipe_list_get,
   recipe_get,
+  recipe_picture_delete,
   recipe_picture_post,
   recipe_post,
   recipe_update,
