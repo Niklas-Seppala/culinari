@@ -46,7 +46,10 @@ const user_create_post = async (req, res, next) => {
     const hash = bcryptjs.hashSync(req.body.password, salt);
 
     const users = await User.findAll({
-      where: {email: req.body.email.toLowerCase()}
+      where: {
+        name: req.body.name.toLowerCase(),
+        email: req.body.email.toLowerCase()
+      }
     });
     console.log("users", users)
     if(users.length > 0) {
