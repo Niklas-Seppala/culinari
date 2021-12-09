@@ -74,6 +74,25 @@ router.route("/:recipeId")
         recipeController.recipe_delete
     )
 
+// add ingredient to existing recipe
+router.route("/:recipeId/ingredient")
+    .post(
+        passport.authenticate('jwt', { session: false }),
+        body('name').notEmpty().trim().escape(),
+        body('amount').notEmpty().trim().escape(),
+        body('unit').notEmpty().trim().escape(),
+        recipeController.recipe_ingredient_add
+    )
+
+// add step to existing recipe
+router.route("/:recipeId/step")
+    .post(
+        passport.authenticate('jwt', { session: false }),
+        body('order').notEmpty().trim().escape(),
+        body('content').notEmpty().trim().escape(),
+        recipeController.recipe_step_add
+    )
+
 router.route("/:recipeId/ingredient/:ingredientId")
     .put(
         passport.authenticate('jwt', { session: false }),

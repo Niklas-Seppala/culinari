@@ -238,6 +238,7 @@ const recipe_ingredient_delete = async (req, res) => {
     return res.status(200).json({msg: "Ingredient deleted."});
 
 }
+
 const recipe_step_update = async (req, res) => {
     const recipeId = req.params.recipeId;
     const stepId = req.params.stepId;
@@ -300,6 +301,60 @@ const recipe_step_delete = async (req, res) => {
 
 }
 
+const recipe_ingredient_add = async (req,res) => {
+    const recipeId = req.params.recipeId;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    //validate that recipe exists
+    const recipe = await Recipe.scope('includeForeignKeys').findOne({
+        where: {id: recipeId, owner_id: req.user.dataValues.id}
+    });
+
+    if(!recipe) {
+        return res.status(400).json({errors: ["Recipe not found"]});
+    }
+
+    const newIngredient = await Ingredient.create({
+        name: req.body.name,
+        amount: req.body.amount,
+        unit: req.body.unit,
+        recipe_id: recipeId
+    });
+
+    res.json(newIngredient)
+} 
+
+const recipe_step_add = async (req,res) => {
+    const recipeId = req.params.recipeId;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    //validate that recipe exists
+    const recipe = await Recipe.scope('includeForeignKeys').findOne({
+        where: {id: recipeId, owner_id: req.user.dataValues.id}
+    });
+
+    if(!recipe) {
+        return res.status(400).json({errors: ["Recipe not found"]});
+    }
+
+    const newStep = await Step.create({
+        order: req.body.order,
+        content: req.body.content,
+        recipe_id: recipeId
+    });
+
+    return res.json(newStep)
+}
+
+
 
 module.exports = {
   recipe_list_get,
@@ -312,4 +367,6 @@ module.exports = {
   recipe_ingredient_delete,
   recipe_step_update,
   recipe_step_delete,
+  recipe_ingredient_add,
+  recipe_step_add
 };
