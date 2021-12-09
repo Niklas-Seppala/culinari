@@ -74,4 +74,4 @@ app.use('/comment', commentRouter);
 app.use('/picture', pictureRouter);
 app.use('/ingredient', ingredientRouter);
 app.use('/user', userRouter);
-app.use('/thumbnails', express.static('thumbnails'));
+app.use('/uploads', express.static('uploads'));

@@ -40,21 +40,17 @@ Recipe.init(
 Recipe.addScope('includeForeignKeys', {
   include: [
     {
-      attributes: ['recipe_id', 'filename', 'order'],
+      attributes: ['id', 'recipe_id', 'filename', 'order'],
       model: Picture,
       as: fkName(Picture),
     },
-  ],
-  include: [
     {
-      attributes: ['name', 'amount', 'unit'],
+      attributes: ['id', 'name', 'amount', 'unit'],
       model: Ingredient,
       as: fkName(Ingredient),
     },
-  ],
-  include: [
     {
-      attributes: ['content', 'order'],
+      attributes: ['id', 'content', 'order'],
       model: Step,
       as: fkName(Step),
     },

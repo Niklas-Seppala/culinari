@@ -59,6 +59,16 @@ User.addScope('includeRecipes', {
   ],
 });
 
+User.addScope('includePassword', {
+  include: [
+    {
+      attributes: {
+        include: ["password"],
+      }
+    },
+  ],
+});
+
 module.exports = User;
 
 /*
