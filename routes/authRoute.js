@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { body, sanitizeBody } = require('express-validator');
-const { login, logout, user_create_post } = require('../controllers/authController');
+const { login, logout, register_post } = require('../controllers/authController');
 
 router.post('/login', body("username").notEmpty(), login);
 router.get('/logout', logout);
@@ -16,7 +16,7 @@ router.post(
     body("password", "The password needs at least 8 characters").isLength({min: 8}).trim().escape(),
     sanitizeBody('name').escape(),
   ],
-  user_create_post
+  register_post
 );
 
 module.exports = router;
