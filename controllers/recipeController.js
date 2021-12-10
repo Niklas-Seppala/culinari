@@ -12,12 +12,25 @@ const Picture = require('../models/pictureModel.js');
     Gets the list of recipes
 */
 const recipe_list_get = async (req, res) => {
+    /* #swagger.parameters['recipe'] = { 
+           in: 'body',
+           description: 'an array of recipes',
+           type: 'object',
+           schema: [{$ref: "#/definitions/recipe"}]
+    } */
   // TODO: add pagination
   const recipes = await Recipe.scope('includeForeignKeys').findAll();
   return res.json(recipes);
 };
 
 const recipe_get = async (req, res) => {
+    /* #swagger.parameters['recipe'] = { 
+           in: 'body',
+           description: 'Recipe',
+           type: 'object',
+           schema: { $ref: "#/definitions/recipe" }
+    } */
+
   const recipeId = req.params.recipeId;
   const recipe = await Recipe.scope('includeForeignKeys').findOne({
     where: { id: recipeId },
@@ -32,6 +45,12 @@ const recipe_get = async (req, res) => {
 };
 
 const recipe_post = async (req, res) => {
+    /* #swagger.parameters['recipe'] = { 
+           in: 'body',
+           description: 'Recipe',
+           type: 'object',
+           schema: { $ref: "#/definitions/recipe" }
+    } */
 
     const errors = validationResult(req);
 

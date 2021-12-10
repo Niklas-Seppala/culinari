@@ -8,6 +8,9 @@ const cors = require('cors');
 
 const fs = require('fs');
 
+const swaggerUI = require("swagger-ui-express");
+const swagger_docs = require('./swagger_output.json');
+
 const sslkey = fs.readFileSync('ssl-key.pem');
 const sslcert = fs.readFileSync('ssl-cert.pem');
 
@@ -57,9 +60,10 @@ if (process.env.NODE_ENV === 'production') {
   );
 }
 
-app.get('/', (req, res) => {
-  res.send('Hello Secure World!');
-});
+// API docs
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swagger_docs));
+
+
 
 app.use((err, req, res, next) => {
   console.log('Error!');

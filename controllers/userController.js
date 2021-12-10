@@ -17,11 +17,24 @@ const hide_pass = users =>
   });
 
 const user_list_get = async (req, res) => {
+  /* #swagger.parameters['user'] = { 
+         in: 'body',
+         description: 'an array of users',
+         type: 'object',
+         schema: [{$ref: "#/definitions/user"}]
+  } */
   const users = await User.findAll();
   res.json(hide_pass(users));
 };
 
 const user_get = async (req, res) => {
+  /* #swagger.parameters['user'] = { 
+         in: 'body',
+         description: 'User',
+         type: 'object',
+         schema: { $ref: "#/definitions/user" }
+  } */
+
   let userId = req.params.userId;
 
   const user = await User.scope('includeRecipes').findOne({ where: { id: userId } });
@@ -31,6 +44,18 @@ const user_get = async (req, res) => {
 };
 
 const user_password_update = async (req, res) => {
+  
+  /* #swagger.parameters['password'] = { 
+         in: 'body',
+         description: 'The password',
+         schema: { $ref: "#/definitions/password" }
+  } */
+  /* #swagger.parameters['password2'] = { 
+         in: 'body',
+         description: 'The password repeated',
+         schema: { $ref: "#/definitions/password" }
+  } */
+
   const errors = validationResult(req);
   console.log('UPDATE USER PASSWORD', errors);
   if (!errors.isEmpty()) {

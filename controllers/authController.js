@@ -8,7 +8,10 @@ const User  = require('../models/userModel.js');
 require('dotenv').config({ path: '../.env' });
 
 const login = (req, res) => {
-  passport.authenticate('local', { session: false }, (err, user, info) => {
+    /* #swagger.parameters['username'] = {in: 'body', example: "password", description: 'The email of the user', type: 'string' } */
+    /* #swagger.parameters['password'] = {in: 'body', description: 'The password of the user', type: 'string' } */ 
+
+    passport.authenticate('local', { session: false }, (err, user, info) => {
     console.log(err, user, info);
 
     if (err || !user) {
