@@ -25,14 +25,7 @@ const login = (req, res) => {
     req.login(user, { session: false }, err => {
       if (err) next(err);
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-      return res.json({
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        score: user.score,
-        joined: user.createdAt,
-        token: token,
-      });
+      return res.json({...user, token: token });
     });
   })(req, res);
 };

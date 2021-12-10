@@ -41,7 +41,7 @@ User.init(
     sequelize,
     modelName: sequelize._TABLE_NAME_PREFIX + 'user',
     defaultScope: {
-      attributes: { exclude: ['password'] },
+      attributes: { exclude: ['password', "updatedAt"] },
     },
   }
 );
