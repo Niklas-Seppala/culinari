@@ -27,6 +27,22 @@ const user_list_get = async (req, res) => {
   res.json(hide_pass(users));
 };
 
+const user_self_get = async (req, res) => {
+  /* #swagger.parameters['user'] = { 
+         in: 'body',
+         description: 'an array of users',
+         type: 'object',
+         schema: [{$ref: "#/definitions/user"}]
+  } */
+  let userId = req.user.dataValues.id;
+
+  const user = await User.scope('includeRecipes').findOne({ where: { id: userId } });
+  //return res.json(hide_pass(user)[0]);
+
+  return res.json(hide_pass([user])[0]);
+}
+
+
 const user_get = async (req, res) => {
   /* #swagger.parameters['user'] = { 
          in: 'body',
@@ -123,6 +139,7 @@ const checkToken = (req, res, next) => {
 
 module.exports = {
   user_list_get,
+  user_self_get,
   user_get,
   user_update,
   user_password_update,

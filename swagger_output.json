@@ -93,6 +93,28 @@
       }
     },
     "/user/": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "an array of users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/user"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "put": {
         "tags": [],
         "description": "",
