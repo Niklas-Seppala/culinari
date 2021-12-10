@@ -10,7 +10,7 @@ const User = require('../models/userModel');
 
 const bcryptjs = require('bcryptjs');
 
-const getUserLogin = async (payload, done) => {
+const jwtUserLookup = async (payload, done) => {
   const user = await User.findOne({
     where: { id: payload.id },
     attributes: {
@@ -54,7 +54,7 @@ passport.use(
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
     },
-    getUserLogin
+    jwtUserLookup
   )
 );
 
