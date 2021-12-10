@@ -10,34 +10,39 @@ const User = require('../models/userModel');
 
 const bcryptjs = require('bcryptjs');
 
-const getUserLogin = async username => {
+const getUserLogin = async (payload, done) => {
   const user = await User.findOne({
-    where: { email: username },
+    where: { id: payload.id },
     attributes: {
       include: ['password'],
     },
   });
-  return { ...user?.dataValues }
+  done(null, user?.dataValues)
 };
 
 passport.use(
   new Strategy(async (username, password, done) => {
     try {
-      const user = await getUserLogin(username);
+      const user = (await User.findOne({
+        where: { name: username },
+        attributes: {
+          include: ['password'],
+        },
+      }))?.dataValues;
 
       // Incorrect email.
       if (!user) return done(null, false, { message: 'Incorrect email.' });
 
       // Incorrect password.
       if (!bcryptjs.compareSync(password, user.password)) {
-        console.log('incorrect pw')
         return done(null, false, { message: 'Incorrect password.' });
       }
       
       // Success.
-
+      delete user.password
       return done(null, user, { message: 'Welcome.' });
     } catch (err) {
+      console.log(err)
       return done(err);
     }
   })

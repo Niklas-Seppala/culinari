@@ -69,16 +69,15 @@ const swaggerOptions = {
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swagger_docs, swaggerOptions));
 
 
-app.use((err, req, res, next) => {
-  console.log('Error!');
-  const status = err.status || 500;
-  res.status(status).json({ message: err.message || 'internal error' });
-});
-
-
 app.use('/recipe', recipeRouter);
 app.use('/comment', commentRouter);
 app.use('/picture', pictureRouter);
 app.use('/ingredient', ingredientRouter);
 app.use('/user', userRouter);
 app.use('/uploads', express.static('uploads'));
+
+app.use((err, req, res, next) => {
+  console.log('Error!');
+  const status = err.status || 500;
+  res.status(status).json({ msg: err.msg || 'internal error' });
+});
