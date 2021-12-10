@@ -11,23 +11,26 @@ const login = (req, res) => {
     /* #swagger.parameters['username'] = {in: 'body', example: "password", description: 'The email of the user', type: 'string' } */
     /* #swagger.parameters['password'] = {in: 'body', description: 'The password of the user', type: 'string' } */ 
 
+    // Validate login.
     passport.authenticate('local', { session: false }, (err, user, info) => {
-    console.log(err, user, info);
-
     if (err || !user) {
       return res.status(400).json({
         message: err,
-        user: user,
+        user: null,
+        info: info
       });
     }
 
     req.login(user, { session: false }, err => {
-      if (err) {
-        next(err);
-      }
-      // generate a signed son web token with the contents of user object and return it in the response
-      const token = jwt.sign(user, process.env.JWT_SECRET);
-      return res.json({ user: user, token: token });
+      if (err) next(err);
+      // generate a signed json web token for succesful login.
+      const token = jwt.sign({ id: user.dataValues.id }, process.env.JWT_SECRET);
+      return res.json({ 
+        name: user.dataValues.name,
+        email: user.dataValues.email,
+        role: user.dataValues.role,
+        score: user.dataValues.score,
+        token: token });
     });
   })(req, res);
 };
