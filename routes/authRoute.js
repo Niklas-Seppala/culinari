@@ -11,8 +11,9 @@ router.post(
   '/register',
   [
     body('name', 'minimum 3 characters').isLength({ min: 3 }),
-    body('email', 'email is not valid').isEmail(),
-    body('password', 'at least one upper case letter').matches('(?=.*[A-Z]).{8,}'),
+    body('username', 'email is not valid').isEmail(),
+    body("password", "The password needs at least one uppercase letter").matches(/^(?=.*[a-z])(?=.*[A-Z]).*$/).trim().escape(),
+    body("password", "The password needs at least 8 characters").isLength({min: 8}).trim().escape(),
     sanitizeBody('name').escape(),
     sanitizeBody('email').escape(),
   ],

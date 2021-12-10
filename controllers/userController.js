@@ -4,6 +4,11 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/userModel');
 const Recipe = require('../models/recipeModel');
 
+const bcryptjs = require('bcryptjs');
+
+
+
+
 const hide_pass = users =>
   users.map(u => {
     console.log(u);
@@ -25,13 +30,60 @@ const user_get = async (req, res) => {
   return res.json(hide_pass([user])[0]);
 };
 
+const user_password_update = async (req, res) => {
+  const errors = validationResult(req);
+  console.log('UPDATE USER PASSWORD', errors);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const user = await User.findOne({where: {id: req.user.dataValues.id}});
+
+  if(req.body.password != req.body.password2) {
+    return res.status(400).json({errors: ["Passwords don't match"]});
+  }
+
+  const salt = bcryptjs.genSaltSync(10);
+  const hash = bcryptjs.hashSync(req.body.password, salt);
+
+  await User.update(
+    {
+      password: hash
+    }, 
+    {
+      where: {
+          id: req.user.dataValues.id
+        }
+    }
+  );
+
+  return res.json({msg: "Password changed succesfully"});
+
+}
+
 const user_update = async (req, res) => {
   const errors = validationResult(req);
   console.log('UPDATE USER', errors);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const user = await userModel.updateUser(req.body, req.user);
+
+  const user = await User.findOne({where: {id: req.user.dataValues.id}});
+
+  if(!user) {
+    return res.status(404).json({errors: ["User not found!"]});
+  }
+
+  await User.update(
+    {
+      name: req.body.name,
+      email: req.body.email
+    }, 
+    {
+      where: {
+        id: req.user.dataValues.id
+      }}
+  );
 
   return res.json({ message: 'User updated!' });
 };
@@ -48,5 +100,6 @@ module.exports = {
   user_list_get,
   user_get,
   user_update,
+  user_password_update,
   checkToken,
 };
