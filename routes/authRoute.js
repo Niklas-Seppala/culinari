@@ -15,6 +15,7 @@ router.post(
     body("password", "The password needs at least one uppercase letter").matches(/^(?=.*[a-z])(?=.*[A-Z]).*$/).trim().escape(),
     body("password", "The password needs at least 8 characters").isLength({min: 8}).trim().escape(),
     sanitizeBody('name').escape(),
+    sanitizeBody('email').escape(),
   ],
   user_create_post
 );
