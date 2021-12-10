@@ -69,14 +69,12 @@ const swaggerOptions = {
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swagger_docs, swaggerOptions));
 
 
-
 app.use((err, req, res, next) => {
   console.log('Error!');
   const status = err.status || 500;
   res.status(status).json({ message: err.message || 'internal error' });
 });
 
-app.use('/user', userRouter); // auth this too?
 
 app.use('/recipe', recipeRouter);
 app.use('/comment', commentRouter);

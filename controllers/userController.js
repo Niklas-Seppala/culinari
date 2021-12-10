@@ -137,6 +137,18 @@ const checkToken = (req, res, next) => {
   }
 };
 
+
+/**
+ * 
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ */
+const users_get = async (req, res, next) => {
+  const users = await User.findAll()
+  res.json(users)
+}
+
+
 module.exports = {
   user_list_get,
   user_self_get,
@@ -144,4 +156,5 @@ module.exports = {
   user_update,
   user_password_update,
   checkToken,
+  users_get
 };

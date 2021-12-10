@@ -35,7 +35,7 @@ passport.use(
       }
       
       // Success.
-      delete user.password
+
       return done(null, user, { message: 'Welcome.' });
     } catch (err) {
       return done(err);

@@ -10,10 +10,12 @@ const passport = require('../utils/pass.js');
 const userController = require('../controllers/userController');
 
 router.route('/')
-    .get(
-        passport.authenticate('jwt', { session: false }),
-        userController.user_self_get
-    )
+    .get(userController.users_get)
+
+    // .get(
+    //     passport.authenticate('jwt', { session: false }),
+    //     userController.user_self_get
+    // )
     .put(
         passport.authenticate('jwt', { session: false }),
         body("name").isLength({min: 3}).trim().escape(),
