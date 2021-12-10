@@ -27,6 +27,14 @@ const login = (req, res) => {
       }
       // generate a signed son web token with the contents of user object and return it in the response
       const token = jwt.sign(user, process.env.JWT_SECRET);
+
+      // small amount of housekeeping
+      // TODO: put into model
+      delete req.user.dataValues.password;
+      delete req.user._previousDataValues;
+      delete req.user._changed;
+      delete req.user._options;
+
       return res.json({ user: user, token: token });
     });
   })(req, res);
