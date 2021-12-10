@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const passport = require('../utils/pass');
 const bcryptjs = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
-const { addUser } = require('../models/userModel');
+const User  = require('../models/userModel.js');
 
 require('dotenv').config({ path: '../.env' });
 
@@ -40,18 +40,36 @@ const user_create_post = async (req, res, next) => {
 
   if (!errors.isEmpty()) {
     console.log('user create error', errors);
-    res.send(errors.array());
+    return res.send(errors.array());
   } else {
     const salt = bcryptjs.genSaltSync(10);
     const hash = bcryptjs.hashSync(req.body.password, salt);
 
-    const params = [req.body.name, req.body.username, hash];
+    const users = await User.findAll({
+      where: {
+        name: req.body.name.toLowerCase(),
+        email: req.body.email.toLowerCase()
+      }
+    });
+    console.log("users", users)
+    if(users.length > 0) {
+      return res.status(400).json({errors: ["User already exists with this email"]});
+    } 
 
-    const result = await addUser(params);
-    if (result.insertId) {
-      res.json({ message: `User added`, user_id: result.insertId });
+    const newUser = User.create({
+      name: req.body.name,
+      password: hash,
+      email: req.body.email,
+      role: 0,
+      score: 0,
+    });
+
+
+
+    if (newUser) {
+      return res.json({ msg: `User added`});
     } else {
-      res.status(400).json({ error: 'register error' });
+      return res.status(400).json({ error: 'register error' });
     }
   }
 };
