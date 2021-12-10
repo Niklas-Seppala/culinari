@@ -61,7 +61,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // API docs
-app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swagger_docs));
+const swaggerOptions = {
+  customCss: ".try-out__btn {display: none !important;}",
+  customSiteTitle: "Culinari REST API"
+}
+
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swagger_docs, swaggerOptions));
 
 
 
