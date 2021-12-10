@@ -1,5 +1,5 @@
 'use strict';
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 
 const { unlink } = require('fs');
 
@@ -57,8 +57,6 @@ const recipe_post = async (req, res) => {
     console.log(req.body);
     console.log("user is:",req.user)
 
-    const userId = req.user.dataValues.id;
-
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
@@ -66,7 +64,7 @@ const recipe_post = async (req, res) => {
     const recipe = await Recipe.create({
         name: req.body.name,
         desc: req.body.desc,
-        owner_id: userId,
+        owner_id: req.user.id,
     });
 
 
@@ -105,7 +103,7 @@ const recipe_post = async (req, res) => {
 const recipe_picture_post = async (req, res) => {
     const recipeId = req.params.recipeId;
     let recipe = await Recipe.scope('includeForeignKeys').findOne({
-      where: { id: recipeId, owner_id: req.user.dataValues.id },
+      where: { id: recipeId, owner_id: req.user.id },
     });
 
     if (!recipe) {
@@ -143,7 +141,7 @@ const recipe_picture_delete = async (req, res) => {
     const recipeId = req.params.recipeId;
     const pictureId = req.params.pictureId;
     let recipe = await Recipe.scope('includeForeignKeys').findOne({
-      where: { id: recipeId, owner_id: req.user.dataValues.id },
+      where: { id: recipeId, owner_id: req.user.id },
     });
 
     if (!recipe) {
@@ -177,7 +175,7 @@ const recipe_update = async (req, res) => {
     console.log(req.body);
     console.log("user is:",req.user)
 
-    const userId = req.user.dataValues.id;
+    const userId = req.user.id;
 
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -212,7 +210,7 @@ const recipe_update = async (req, res) => {
 const recipe_delete = async (req, res) => {
     const recipeId = req.params.recipeId;
     let recipe = await Recipe.scope('includeForeignKeys').findOne({
-      where: { id: recipeId, owner_id: req.user.dataValues.id },
+      where: { id: recipeId, owner_id: req.user.id },
     });
 
     await recipe.destroy();
@@ -233,7 +231,7 @@ const recipe_ingredient_update = async (req, res) => {
 
     //validate that recipe exists
     const recipe = await Recipe.scope('includeForeignKeys').findOne({
-        where: {id: recipeId, owner_id: req.user.dataValues.id}
+        where: {id: recipeId, owner_id: req.user.id}
     });
 
     if (!recipe) {
@@ -269,7 +267,7 @@ const recipe_ingredient_delete = async (req, res) => {
 
     //validate that recipe exists
     const recipe = await Recipe.scope('includeForeignKeys').findOne({
-        where: {id: recipeId, owner_id: req.user.dataValues.id}
+        where: {id: recipeId, owner_id: req.user.id}
     });
 
     if (!recipe) {
@@ -303,7 +301,7 @@ const recipe_step_update = async (req, res) => {
 
     //validate that recipe exists
     const recipe = await Recipe.scope('includeForeignKeys').findOne({
-        where: {id: recipeId, owner_id: req.user.dataValues.id}
+        where: {id: recipeId, owner_id: req.user.id}
     });
 
     if (!recipe) {
@@ -331,7 +329,7 @@ const recipe_step_delete = async (req, res) => {
 
     //validate that recipe exists
     const recipe = await Recipe.scope('includeForeignKeys').findOne({
-        where: {id: recipeId, owner_id: req.user.dataValues.id}
+        where: {id: recipeId, owner_id: req.user.id}
     });
 
     if (!recipe) {
@@ -363,7 +361,7 @@ const recipe_ingredient_add = async (req,res) => {
 
     //validate that recipe exists
     const recipe = await Recipe.scope('includeForeignKeys').findOne({
-        where: {id: recipeId, owner_id: req.user.dataValues.id}
+        where: {id: recipeId, owner_id: req.user.id}
     });
 
     if(!recipe) {
@@ -390,7 +388,7 @@ const recipe_step_add = async (req,res) => {
 
     //validate that recipe exists
     const recipe = await Recipe.scope('includeForeignKeys').findOne({
-        where: {id: recipeId, owner_id: req.user.dataValues.id}
+        where: {id: recipeId, owner_id: req.user.id}
     });
 
     if(!recipe) {

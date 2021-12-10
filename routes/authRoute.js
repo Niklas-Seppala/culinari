@@ -2,10 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const { body, sanitizeBody } = require('express-validator');
-const { login, logout, register_post } = require('../controllers/authController');
+const { login, register } = require('../controllers/authController');
 
 router.post('/login', body("username").notEmpty(), login);
-router.get('/logout', logout);
 
 router.post(
   '/register',
@@ -20,7 +19,7 @@ router.post(
     }),
     sanitizeBody('name').escape(),
   ],
-  register_post
+  register
 );
 
 module.exports = router;

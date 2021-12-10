@@ -18,31 +18,25 @@ const login = (req, res) => {
         errors: [
           {
             param: 'password',
-            msg: info?.message,
+            msg: info.message,
           },
         ],
       });
     }
 
     // Generate a signed json web token for succesful login.
+    // Bundle user's own recipes into response
     // Send a response to client with public user data and token.
     req.login(user, { session: false }, async err => {
       if (err) next(err);
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-
       const recipes = await Recipe.findAll({ where: {owner_id: user.id} });
-
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
       return res.json({ ...user, recipes: recipes, token: token });
     });
   })(req, res);
 };
 
-const logout = (req, res) => {
-  req.logout();
-  res.redirect('/');
-};
-
-const register_post = async (req, res) => {
+const register = async (req, res) => {
   // Extract the validation errors from a request.
   const validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
@@ -99,6 +93,5 @@ const register_post = async (req, res) => {
 
 module.exports = {
   login,
-  logout,
-  register_post,
+  register,
 };
