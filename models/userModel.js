@@ -41,11 +41,7 @@ User.init(
     sequelize,
     modelName: sequelize._TABLE_NAME_PREFIX + 'user',
     defaultScope: {
-<<<<<<< Updated upstream
-      attributes: { exclude: ['password', "updatedAt"] },
-=======
       attributes: { exclude: ['password', 'updatedAt'] },
->>>>>>> Stashed changes
     },
   }
 );
