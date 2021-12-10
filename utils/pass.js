@@ -10,24 +10,14 @@ const User = require('../models/userModel');
 
 const bcryptjs = require('bcryptjs');
 
-// local strategy for username password login
-
 const getUserLogin = async username => {
-  console.log('getUserLogin username', username);
-  try {
-    const user = await User.findOne({
-        where: { email: username },
-        attributes: {
-            include: ['password']
-        }
-    });
-    console.log(user)
-
-
-    return user;
-  } catch (e) {
-    console.log('error', e.message);
-  }
+  const user = await User.findOne({
+    where: { email: username },
+    attributes: {
+      include: ['password'],
+    },
+  });
+  return { ...user?.dataValues }
 };
 
 passport.use(
@@ -35,31 +25,22 @@ passport.use(
     try {
       const user = await getUserLogin(username);
 
-      const salt = bcryptjs.genSaltSync(10);
-      const hash = bcryptjs.hashSync(password, salt);
-      console.log("user", user, password, hash)
-      console.log(
-        'Local strategy',
-        user,
-        password,
-        'correct?: ' + bcryptjs.compareSync(password, user.password)
-      ); // result is binary row
-      console.log('hash of input', hash);
-      if (user === undefined) {
-        return done(null, false, { message: 'Incorrect email.' });
-      }
+      // Incorrect email.
+      if (!user) return done(null, false, { message: 'Incorrect email.' });
+
+      // Incorrect password.
       if (!bcryptjs.compareSync(password, user.password)) {
+        console.log('incorrect pw')
         return done(null, false, { message: 'Incorrect password.' });
       }
-      return done(null, { ...user }, { message: 'Logged In Successfully' }); // use spread syntax to create shallow copy to get rid of binary row type
+      
+      // Success.
+      return done(null, { ...user }, { message: 'Welcome.' });
     } catch (err) {
       return done(err);
     }
   })
 );
-
-// TODO: JWT strategy for handling bearer token
-// consider .env for secret, e.g. secretOrKey: process.env.JWT_SECRET
 
 passport.use(
   new JWTStrategy(
@@ -67,17 +48,7 @@ passport.use(
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
     },
-    (jwtPayload, done) => {
-      return done(null, jwtPayload);
-      /*return getUserLogin(jwtPayload.username)
-            .then(user => {
-                return done(null, jwtPayload.user);
-            })
-            .catch(err => {
-                console.log("error");
-                return done(err);
-            });*/
-    }
+    getUserLogin
   )
 );
 

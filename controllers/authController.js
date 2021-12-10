@@ -24,12 +24,13 @@ const login = (req, res) => {
     // Send a response to client with public user data and token.
     req.login(user, { session: false }, err => {
       if (err) next(err);
-      const token = jwt.sign({ id: user.dataValues.id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
       return res.json({
-        name: user.dataValues.name,
-        email: user.dataValues.email,
-        role: user.dataValues.role,
-        score: user.dataValues.score,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        score: user.score,
+        joined: user.createdAt,
         token: token,
       });
     });
@@ -48,7 +49,6 @@ const register_post = async (req, res) => {
     console.log('register error', validationErrors);
     return res.send(validationErrors.array());
   }
-
 
   // Check for pre-existing user with same name/email
   const users = await User.findAll({
