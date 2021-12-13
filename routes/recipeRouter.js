@@ -137,6 +137,16 @@ router.route("/:recipeId/picture/:pictureId")
         recipeController.recipe_picture_delete
     )
 
+router.route('/:recipeId/like')
+    .post(
+        passport.authenticate('jwt', { session: false }),
+        recipeController.recipe_like_add
+    )
+    .delete(
+        passport.authenticate('jwt', { session: false }),
+        recipeController.recipe_like_delete
+    )
+
 
 module.exports = router;
 
