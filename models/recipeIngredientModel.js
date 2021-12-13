@@ -16,8 +16,9 @@ RecipeIngredient.init(
       field: 'unit',
     }
   },
-  {
+{
     sequelize,
+    freezeTableName: true,
     modelName: sequelize._TABLE_NAME_PREFIX + 'recipeIngredient',
   }
 );

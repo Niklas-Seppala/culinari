@@ -12,8 +12,9 @@ Ingredient.init(
       allowNull: false,
     }
   },
-  {
+{
     sequelize,
+    freezeTableName: true,
     modelName: sequelize._TABLE_NAME_PREFIX + 'ingredient',
   }
 );
