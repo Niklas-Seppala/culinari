@@ -35,20 +35,23 @@ Recipe.init(
   {
     sequelize,
     modelName: sequelize._TABLE_NAME_PREFIX + 'recipe',
+    defaultScope: {
+      attributes: {
+        exclude: ['createdAt', "updatedAt"]
+      }
+    }
   }
 );
 
 Recipe.addScope('includeForeignKeys', {
+  attributes: {
+    exclude: ['createdAt', "updatedAt"]
+  },
   include: [
     {
       attributes: ['id', 'recipe_id', 'filename', 'order'],
       model: Picture,
       as: fkName(Picture),
-    },
-    {
-      attributes: ['id', 'name', 'amount', 'unit'],
-      model: Ingredient,
-      as: fkName(Ingredient),
     },
     {
       attributes: ['id', 'content', 'order'],
