@@ -2,9 +2,7 @@
 const jwt = require('jsonwebtoken');
 const passport = require('../utils/pass');
 const bcryptjs = require('bcryptjs');
-const { validationResult } = require('express-validator');
 const User = require('../models/userModel.js');
-const { Op } = require('sequelize');
 const Recipe = require('../models/recipeModel');
 
 const login = (req, res) => {
@@ -37,44 +35,6 @@ const login = (req, res) => {
 };
 
 const register = async (req, res) => {
-  // Extract the validation errors from a request.
-  const validationErrors = validationResult(req);
-  if (!validationErrors.isEmpty()) {
-    return res.status(400).json({ errors: validationErrors.array() });
-  }
-
-  // Check for pre-existing user with same name/email
-  const users = await User.findAll({
-    where: {
-      [Op.or]: {
-        // Single one of these conditions is enough to abort.
-        name: req.body.username.toLowerCase(),
-        email: req.body.email.toLowerCase(),
-      },
-    },
-  });
-
-  if (users.length > 0) {
-    const errors = [];
-    users.forEach(usr => {
-      // Check if name collides => add name error. One is enough, please.
-      if (usr.name === req.body.username && !errors.find(err => err.field === 'name')) {
-        errors.push({
-          param: 'name',
-          msg: 'User already exists with that username',
-        });
-      }
-      // Check if email collides => add email error. One is enough, please.
-      if (usr.email === req.body.email && !errors.find(err => err.field === 'email')) {
-        errors.push({
-          param: 'email',
-          msg: 'User already exists with that email',
-        });
-      }
-    });
-    return res.status(400).json({ errors: errors });
-  }
-
   const salt = bcryptjs.genSaltSync(10);
   const hash = bcryptjs.hashSync(req.body.password, salt);
   const newUser = User.create({

@@ -5,8 +5,6 @@ const sequelize = require('../database/sequelize_init.js');
 const fkName = require('../utils/fkName.js');
 const Recipe = require('../models/recipeModel');
 
-//const Model = Sequelize.Model;
-
 // define the table "user"
 class User extends Model {}
 User.init(
@@ -24,6 +22,7 @@ User.init(
     email: {
       type: Sequelize.STRING,
       field: 'email',
+      unique: true,
       allowNull: false,
     },
     role: {
@@ -63,8 +62,8 @@ User.addScope('includePassword', {
   include: [
     {
       attributes: {
-        include: ["password"],
-      }
+        include: ['password'],
+      },
     },
   ],
 });
