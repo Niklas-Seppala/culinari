@@ -20,6 +20,7 @@ const User = require('../models/userModel.js');
 const Comment = require('../models/commentModel.js');
 const Like = require('../models/likeModel.js');
 const Ingredient = require('../models/ingredientModel.js');
+const RecipeIngredient = require('../models/recipeIngredientModel.js');
 const Step = require('../models/stepModel.js');
 
 // define relations
@@ -27,7 +28,10 @@ User.hasMany(Recipe, { as: fkName(Recipe), foreignKey: 'owner_id' });
 User.hasMany(Comment, { as: fkName(Comment), foreignKey: 'user_id' });
 User.hasMany(Like, { as: fkName(Like), foreignKey: 'user_id' });
 
-Recipe.hasMany(Ingredient, { as: fkName(Ingredient), foreignKey: 'recipe_id' });
+//many-to-many relationship between ingredient and recipe
+Recipe.belongsToMany(Ingredient, {through: RecipeIngredient});
+Ingredient.belongsToMany(Recipe, { through: RecipeIngredient});
+
 Recipe.hasMany(Picture, { as: fkName(Picture), foreignKey: 'recipe_id' });
 Recipe.hasMany(Step, { as: fkName(Step), foreignKey: 'recipe_id' });
 
@@ -67,11 +71,27 @@ const sync = async () => {
         console.log(`add user ${user.name} ${user.email} ${user.id}`);
         //add recipe(s)
         for (var j = 0; j < 3; j++) {
+
+          let ingredients = [];
+          for(var m = 0; m < 3; m++) {
+            ingredients.push(
+              {
+                name: faker.lorem.word(),
+                culinari_recipeIngredient: {
+                  amount: 1.0,
+                  unit: "kpl"
+                }
+              }
+            )
+          }
+          console.log("ingredients ", ingredients)
           const recipe = await Recipe.create({
             name: faker.lorem.word() + ' ' + faker.lorem.word(),
             desc: faker.lorem.sentences().substring(0, 250),
             owner_id: user.id,
-          });
+            culinari_ingredients: ingredients,
+          }, {include: Ingredient});
+          console.log("Created ", recipe);
 
           // add pictures
           for (var k = 0; k < 3; k++) {
