@@ -15,19 +15,19 @@ router
   .put(
     passport.authenticate('jwt', { session: false }),
 
-    body('username', 'Username must be atleast 3 letters.')
+    body('username', 'Username must be at least 3 letters.')
       .trim()
       .escape()
       .isLength({ min: 3 })
       .custom(async (val, {req}) => await validations.nameUnique(val, req.user.id)),
 
-    body('email', 'Email must be valid: foo@bar.com')
+    body('email', 'Email must be valid: foo@bar.com.')
       .trim()
       .escape()
       .isEmail()
       .custom(async (val, {req}) => await validations.emailUnique(val, req.user.id)),
 
-    body('password', 'Password must be atleats 8 letters')
+    body('password', 'Password must be at least 8 letters')
       .trim()
       .escape()
       .isLength({ min: 8 }),

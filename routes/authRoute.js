@@ -9,20 +9,20 @@ router.post('/login', body('username').notEmpty(), login);
 
 router.post(
   '/register',
-  body('username', 'Minimum of 3 letters')
+  body('username', 'Minimum of 3 letters.')
     .isLength({ min: 3 })
     .custom(async val => await validations.nameUnique(val)),
 
-  body('email', 'Email is not valid')
+  body('email', 'Email is not valid.')
     .isEmail()
     .custom(async val => await validations.emailUnique(val)),
 
-  body('password', 'The password needs at least one uppercase letter')
+  body('password', 'The password needs at least one uppercase letter.')
     .trim()
     .escape()
     .matches(/^(?=.*[a-z])(?=.*[A-Z]).*$/),
 
-  body('password', 'The password needs at least 8 characters')
+  body('password', 'The password needs at least 8 characters.')
     .trim()
     .escape()
     .isLength({ min: 8 }),
