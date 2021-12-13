@@ -3,9 +3,32 @@ const { Sequelize, Model } = require('sequelize');
 const sequelize = require('../database/sequelize_init.js');
 const Picture = require('./pictureModel.js');
 const Ingredient = require('./ingredientModel.js');
+const RecipeIngredient = require('./recipeIngredientModel.js');
 const Step = require('./stepModel.js');
 
 const fkName = require('../utils/fkName.js');
+
+const toJSON = function() {
+
+  let values = Object.assign({}, this.get());
+  const tn = RecipeIngredient.model.getTableName();
+
+  // flatten the recipeIngredient portion of the json
+  //so the values are in a single depth object for each
+
+  values.ingredient.forEach((ing) => {
+    
+    for(const [k,v] of Object.entries(ing[tn])) {
+      ing[k] = ing[tn][k]
+    }
+
+    delete ing[tn];
+  });
+  
+  //console.log(values)
+  return values;
+  }
+
 
 // define the table "recipe"
 class Recipe extends Model {}
@@ -31,11 +54,14 @@ Recipe.init(
       field: 'forked_from',
     },
   },
-  {
+{
     sequelize,
-    modelName: sequelize._TABLE_NAME_PREFIX + 'recipe',
+    freezeTableName: true,
+    modelName: sequelize._TABLE_NAME_PREFIX + 'recipe'
   }
 );
+
+Recipe.prototype.toJSON = toJSON;
 
 Recipe.addScope('includeForeignKeys', {
   include: [
@@ -45,9 +71,10 @@ Recipe.addScope('includeForeignKeys', {
       as: fkName(Picture),
     },
     {
-      attributes: ['id', 'name', 'amount', 'unit'],
+      attributes: ['id', 'name'],
       model: Ingredient,
       as: fkName(Ingredient),
+      through: RecipeIngredient
     },
     {
       attributes: ['id', 'content', 'order'],

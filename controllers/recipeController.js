@@ -36,7 +36,7 @@ const recipe_get = async (req, res) => {
     where: { id: recipeId },
   });
   console.log('recipeId', recipeId);
-  console.log('recipe', recipe);
+
   if(!recipe) {
     return res.status(400).json({error: "Recipe not found"});
   }

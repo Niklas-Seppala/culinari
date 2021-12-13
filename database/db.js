@@ -29,8 +29,8 @@ User.hasMany(Comment, { as: fkName(Comment), foreignKey: 'user_id' });
 User.hasMany(Like, { as: fkName(Like), foreignKey: 'user_id' });
 
 //many-to-many relationship between ingredient and recipe
-Recipe.belongsToMany(Ingredient, {through: RecipeIngredient});
-Ingredient.belongsToMany(Recipe, { through: RecipeIngredient});
+Recipe.belongsToMany(Ingredient, {as: fkName(Ingredient), through: RecipeIngredient});
+Ingredient.belongsToMany(Recipe, {as: fkName(Recipe),  through: RecipeIngredient});
 
 Recipe.hasMany(Picture, { as: fkName(Picture), foreignKey: 'recipe_id' });
 Recipe.hasMany(Step, { as: fkName(Step), foreignKey: 'recipe_id' });
@@ -89,8 +89,8 @@ const sync = async () => {
             name: faker.lorem.word() + ' ' + faker.lorem.word(),
             desc: faker.lorem.sentences().substring(0, 250),
             owner_id: user.id,
-            culinari_ingredients: ingredients,
-          }, {include: Ingredient});
+            ingredient: ingredients,
+          }, {include: [{model: Ingredient, as: fkName(Ingredient)}]});
           console.log("Created ", recipe);
 
           // add pictures
