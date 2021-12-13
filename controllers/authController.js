@@ -2,7 +2,6 @@
 const jwt = require('jsonwebtoken');
 const passport = require('../utils/pass');
 const bcryptjs = require('bcryptjs');
-const { validationResult } = require('express-validator');
 const User = require('../models/userModel.js');
 const { Op } = require('sequelize');
 const Recipe = require('../models/recipeModel');
@@ -37,12 +36,6 @@ const login = (req, res) => {
 };
 
 const register = async (req, res) => {
-  // Extract the validation errors from a request.
-  const validationErrors = validationResult(req);
-  if (!validationErrors.isEmpty()) {
-    return res.status(400).json({ errors: validationErrors.array() });
-  }
-
   // Check for pre-existing user with same name/email
   const users = await User.findAll({
     where: {

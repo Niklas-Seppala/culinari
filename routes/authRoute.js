@@ -1,8 +1,9 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-const { body, sanitizeBody } = require('express-validator');
+const { body } = require('express-validator');
 const { login, register } = require('../controllers/authController');
+const validations = require('../utils/validations')
 
 router.post('/login', body("username").notEmpty(), login);
 
@@ -17,8 +18,8 @@ router.post(
       if (value !== req.body.password) throw new Error("Passwords don't match");
       else return value;
     }),
-    sanitizeBody('name').escape(),
   ],
+  validations.solve,
   register
 );
 
