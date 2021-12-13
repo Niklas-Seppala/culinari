@@ -43,7 +43,6 @@ app.use(express.urlencoded());
 app.use(cors());
 app.use(passport.initialize());
 app.enable('trust proxy');
-app.use('/auth', authRoute);
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 if (process.env.NODE_ENV === 'production') {
@@ -69,18 +68,16 @@ const swaggerOptions = {
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swagger_docs, swaggerOptions));
 
 
-
-app.use((err, req, res, next) => {
-  console.log('Error!');
-  const status = err.status || 500;
-  res.status(status).json({ message: err.message || 'internal error' });
-});
-
-app.use('/user', userRouter); // auth this too?
-
+app.use('/auth', authRoute);
 app.use('/recipe', recipeRouter);
 app.use('/comment', commentRouter);
 app.use('/picture', pictureRouter);
 app.use('/ingredient', ingredientRouter);
 app.use('/user', userRouter);
 app.use('/uploads', express.static('uploads'));
+
+app.use((err, req, res, next) => {
+  console.log('Error!');
+  const status = err.status || 500;
+  res.status(status).json({ msg: err.msg || 'internal error' });
+});

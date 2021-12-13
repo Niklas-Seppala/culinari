@@ -5,6 +5,7 @@ const bcryptjs = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const User = require('../models/userModel.js');
 const { Op } = require('sequelize');
+const Recipe = require('../models/recipeModel');
 
 const login = (req, res) => {
   /* #swagger.parameters['username'] = {in: 'body', example: "password", description: 'The email of the user', type: 'string' } */
@@ -14,47 +15,40 @@ const login = (req, res) => {
   passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err || !user) {
       return res.status(400).json({
-        message: err,
-        user: null,
-        info: info,
+        errors: [
+          {
+            param: 'password',
+            msg: info.message,
+          },
+        ],
       });
     }
 
     // Generate a signed json web token for succesful login.
+    // Bundle user's own recipes into response
     // Send a response to client with public user data and token.
-    req.login(user, { session: false }, err => {
+    req.login(user, { session: false }, async err => {
       if (err) next(err);
-      const token = jwt.sign({ id: user.dataValues.id }, process.env.JWT_SECRET);
-      return res.json({
-        name: user.dataValues.name,
-        email: user.dataValues.email,
-        role: user.dataValues.role,
-        score: user.dataValues.score,
-        token: token,
-      });
+      const recipes = await Recipe.findAll({ where: {owner_id: user.id} });
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+      return res.json({ ...user, recipes: recipes, token: token });
     });
   })(req, res);
 };
 
-const logout = (req, res) => {
-  req.logout();
-  res.redirect('/');
-};
-
-const register_post = async (req, res) => {
+const register = async (req, res) => {
   // Extract the validation errors from a request.
   const validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
-    console.log('register error', validationErrors);
-    return res.send(validationErrors.array());
+    return res.status(400).json({ errors: validationErrors.array() });
   }
-
 
   // Check for pre-existing user with same name/email
   const users = await User.findAll({
     where: {
-      [Op.or]: { // Single one of these conditions is enough to abort.
-        name: req.body.name.toLowerCase(),
+      [Op.or]: {
+        // Single one of these conditions is enough to abort.
+        name: req.body.username.toLowerCase(),
         email: req.body.email.toLowerCase(),
       },
     },
@@ -64,17 +58,17 @@ const register_post = async (req, res) => {
     const errors = [];
     users.forEach(usr => {
       // Check if name collides => add name error. One is enough, please.
-      if (usr.name === req.body.name && !errors.find(err => err.field === 'name')) {
+      if (usr.name === req.body.username && !errors.find(err => err.field === 'name')) {
         errors.push({
-          field: 'name',
-          error: 'User already exists with that username',
+          param: 'name',
+          msg: 'User already exists with that username',
         });
       }
       // Check if email collides => add email error. One is enough, please.
       if (usr.email === req.body.email && !errors.find(err => err.field === 'email')) {
         errors.push({
-          field: 'email',
-          error: 'User already exists with that email',
+          param: 'email',
+          msg: 'User already exists with that email',
         });
       }
     });
@@ -84,22 +78,20 @@ const register_post = async (req, res) => {
   const salt = bcryptjs.genSaltSync(10);
   const hash = bcryptjs.hashSync(req.body.password, salt);
   const newUser = User.create({
-    name: req.body.name,
+    name: req.body.username,
     password: hash,
     email: req.body.email,
     role: 0,
     score: 0,
   });
-
   if (newUser) {
-    return res.json({ msg: `User added` });
+    return res.json({ msg: `success` });
   } else {
-    return res.status(500).json({ error: 'register error' }); // My bad, not user's.
+    return res.status(500).json({ error: 'register error' });
   }
 };
 
 module.exports = {
   login,
-  logout,
-  register_post,
+  register,
 };
