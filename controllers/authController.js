@@ -6,6 +6,7 @@ const { validationResult } = require('express-validator');
 const User = require('../models/userModel.js');
 const { Op } = require('sequelize');
 const Recipe = require('../models/recipeModel');
+const Comment = require('../models/commentModel');
 
 const login = (req, res) => {
   /* #swagger.parameters['username'] = {in: 'body', example: "password", description: 'The email of the user', type: 'string' } */
@@ -25,13 +26,14 @@ const login = (req, res) => {
     }
 
     // Generate a signed json web token for succesful login.
-    // Bundle user's own recipes into response
+    // Bundle user's own recipes and comments into response
     // Send a response to client with public user data and token.
     req.login(user, { session: false }, async err => {
       if (err) next(err);
       const recipes = await Recipe.findAll({ where: {owner_id: user.id} });
+      const comments = await Comment.findAll( {where: {author_id: user.id} });
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-      return res.json({ ...user, recipes: recipes, token: token });
+      return res.json({ ...user, recipes: recipes, comments: comments, token: token });
     });
   })(req, res);
 };
