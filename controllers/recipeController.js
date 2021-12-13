@@ -48,7 +48,11 @@ const post = async (req, res) => {
     })
   );
 
-  return res.json(recipe.dataValues);
+  const result = await Recipe.scope('includeForeignKeys').findOne({
+    where: { id: recipe.id },
+  });
+
+  return res.json(result);
 };
 
 
@@ -83,7 +87,7 @@ const put = async (req, res) => {
       }
     );
 
-    await Step.destroy({where: {recipe_id: recipeId}}) // something to improve
+    await Step.destroy({where: {recipe_id: recipeId}})
     await Step.bulkCreate(
       [...req.body.instructions].map(item => {
         item.recipe_id = recipe.id;
@@ -94,8 +98,8 @@ const put = async (req, res) => {
     const updated = await Recipe.scope('includeForeignKeys').findOne({
       where: { id: recipeId, owner_id: req.user.id },
     });
-
     res.json(updated)
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
