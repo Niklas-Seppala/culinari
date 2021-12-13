@@ -28,6 +28,21 @@ const passwordsMatch = (value, {req}) => {
 }
 
 /**
+ * 
+ * @param {[]} value 
+ * @param {{min: number, max: number}} options
+ */
+const arrayOfSize = (value, options) => {
+  if (value.length < (options.min || 1))
+    throw new Error('Collection has too few items.')
+
+  if (options.max && value.length > options.max)
+    throw new Error('Colleaction has too many items.')
+
+  return value;
+}
+
+/**
  * Validates request body.
  *
  * @param {Express.Request} req
@@ -54,5 +69,6 @@ module.exports = {
   solve,
   emailUnique,
   nameUnique,
-  passwordsMatch
+  passwordsMatch,
+  arrayOfSize
 };

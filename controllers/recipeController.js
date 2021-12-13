@@ -404,9 +404,48 @@ const recipe_step_add = async (req,res) => {
     return res.json(newStep)
 }
 
+const get_single = async (req, res) => {
+  const recipe = await Recipe.scope('includeForeignKeys')
+    .findOne({where: {id: req.params.id}});
+  if (!recipe) {
+    return res.status(404).json({errors: [{msg: 'No recipe with such id exists.'}]})
+  }
+  return res.json(recipe)
+}
 
+const get_all = async (req, res) => {
+  const recipes = await Recipe.scope('includeForeignKeys').findAll();
+  return res.json(recipes)
+}
+
+const post = async (req, res) => {
+
+  const recipe = await Recipe.create({
+    name: req.body.name,
+    desc: req.body.desc,
+    owner_id: req.user.id,
+  });
+
+  const steps = Step.bulkCreate([...req.body.instructions].map(item => {
+    item.recipe_id = recipe.id
+    return item;
+  }));
+
+  const ings = Ingredient.bulkCreate([...req.body.ingredients].map(item => {
+    item.recipe_id = recipe.id
+    return item;
+  }))
+
+  await Promise.all([steps, ings])
+  return res.json({msg: 'ok'})
+}
 
 module.exports = {
+  get_all,
+  get_single,
+  post,
+  
+
   recipe_list_get,
   recipe_get,
   recipe_picture_delete,

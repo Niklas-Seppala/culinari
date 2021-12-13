@@ -14,6 +14,7 @@ Recipe.init(
     name: {
       type: Sequelize.STRING,
       field: 'name',
+      unique: true,
       allowNull: false,
     },
     desc: {
