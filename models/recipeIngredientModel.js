@@ -14,10 +14,11 @@ RecipeIngredient.init(
     unit: {
       type: Sequelize.STRING,
       field: 'unit',
-    }
+    },
   },
   {
     sequelize,
+    freezeTableName: true,
     modelName: sequelize._TABLE_NAME_PREFIX + 'recipeIngredient',
   }
 );

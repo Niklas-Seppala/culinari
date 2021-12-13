@@ -1,4 +1,4 @@
-'use strict';
+  'use strict';
 const { Sequelize, Model } = require('sequelize');
 const sequelize = require('../database/sequelize_init.js');
 
@@ -36,8 +36,9 @@ User.init(
       allowNull: false,
     },
   },
-  {
+{
     sequelize,
+    freezeTableName: true,
     modelName: sequelize._TABLE_NAME_PREFIX + 'user',
     defaultScope: {
       attributes: { exclude: ['password', 'updatedAt', 'createdAt'] },
