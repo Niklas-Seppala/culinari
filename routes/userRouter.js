@@ -3,30 +3,37 @@ const { body } = require('express-validator');
 const express = require('express');
 const passport = require('../utils/pass.js');
 const userController = require('../controllers/userController');
-const validations = require('../utils/validations')
-
+const validations = require('../utils/validations');
 const router = express.Router();
 
 router
-// Public get all users
+  // Public get all users
   .route('/')
-  // Private update name and email
   .get(userController.users_get)
+
+  // Private update
   .put(
     passport.authenticate('jwt', { session: false }),
+
     body('username', 'Username must be atleast 3 letters.')
       .trim()
       .escape()
-      .isLength({ min: 3 }),
-    body('email', 'Email must be valid: foo@bar.com').trim().escape().isEmail(),
+      .isLength({ min: 3 })
+      .custom(async (val, {req}) => await validations.nameUnique(val, req.user.id)),
+
+    body('email', 'Email must be valid: foo@bar.com')
+      .trim()
+      .escape()
+      .isEmail()
+      .custom(async (val, {req}) => await validations.emailUnique(val, req.user.id)),
+
     body('password', 'Password must be atleats 8 letters')
-    .trim()
-    .escape()
-    .isLength({ min: 8 }),
-    body('confirm').custom((value, { req }) => {
-      if (value !== req.body.password) throw new Error("Passwords don't match");
-      else return value;
-    }),
+      .trim()
+      .escape()
+      .isLength({ min: 8 }),
+
+    body('confirm').custom(validations.passwordsMatch),
+
     validations.solve,
     userController.user_update
   );

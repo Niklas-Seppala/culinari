@@ -25,11 +25,6 @@ const user_get = async (req, res) => {
 
 const user_update = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { id: req.user.id } });
-    if (!user) {
-      return res.status(404).json({ errors: ['User not found!'] });
-    }
-
     const salt = bcryptjs.genSaltSync(10);
     const hash = bcryptjs.hashSync(req.body.password, salt);
     const changes = {
