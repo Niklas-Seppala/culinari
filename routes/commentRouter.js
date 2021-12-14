@@ -34,6 +34,11 @@ router
     body('text').trim().escape().notEmpty(),
     validation.solve,
     commentController.put
-  );
+  )
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    param('id').custom(async val => await validation.commentExists(val)),
+    validation.solve,
+    commentController.del)
 
 module.exports = router;

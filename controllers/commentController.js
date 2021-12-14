@@ -43,9 +43,20 @@ const put = async (req, res) => {
   }
 };
 
+const del = async (req, res) => {
+  try {
+    const comment = await Comment.findOne({where: {id: req.params.id}})
+    comment.destroy();
+    return res.json({msg: 'ok'})
+  } catch (err) {
+    return res.status(500).json({errors: [{msg: 'Internal server error'}]})
+  }
+}
+
 module.exports = {
   get_all,
   get_single,
   post,
   put,
+  del,
 };
