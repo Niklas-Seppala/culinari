@@ -25,7 +25,7 @@ const Step = require('../models/stepModel.js');
 
 // define relations
 User.hasMany(Recipe, { as: fkName(Recipe), foreignKey: 'owner_id' });
-User.hasMany(Comment, { as: fkName(Comment), foreignKey: 'user_id' });
+User.hasMany(Comment, { as: fkName(Comment), foreignKey: 'author_id' }); // FIX
 User.hasMany(Like, { as: fkName(Like), foreignKey: 'user_id' });
 
 //many-to-many relationship between ingredient and recipe
