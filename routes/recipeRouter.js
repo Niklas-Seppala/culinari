@@ -49,4 +49,15 @@ router
 
   .delete(passport.authenticate('jwt', { session: false }), recipeController.del);
 
+router
+  .route('/:recipeId/like')
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    recipeController.recipe_like_add
+  )
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    recipeController.recipe_like_delete
+  );
+
 module.exports = router;
