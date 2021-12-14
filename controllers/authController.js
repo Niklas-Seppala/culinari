@@ -27,7 +27,7 @@ const login = (req, res) => {
     // Send a response to client with public user data and token.
     req.login(user, { session: false }, async err => {
       if (err) next(err);
-      const recipes = await Recipe.findAll({ where: {owner_id: user.id} });
+      const recipes = await Recipe.scope('includeForeignKeys').findAll({ where: {owner_id: user.id} });
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
       return res.json({ ...user, recipes: recipes, token: token });
     });
