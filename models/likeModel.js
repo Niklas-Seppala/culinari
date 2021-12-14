@@ -10,11 +10,13 @@ Like.init(
       type: Sequelize.INTEGER,
       field: 'recipe_id',
       allowNull: false,
+      unique: 'userRecipeIndex'
     },
     user_id: {
       type: Sequelize.INTEGER,
       field: 'user_id',
       allowNull: false,
+      unique: 'userRecipeIndex'
     },
   },
 {
