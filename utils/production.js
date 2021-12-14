@@ -16,10 +16,10 @@ module.exports = (app, httpsPort, httpPort, options) => {
   app.enable('trust proxy');
   console.log('EXPORTING PRODUCTION');
   app.use((req, res, next) => {
-    console.log('secure: ' + req.secure);
+    console.log(`req.url: ${req.url}`);
+    console.log(`secure: ${req.secure}`);
     if (req.secure) {
       // request was via https, so do no special handling
-      console.log('secure');
       next();
     } else {
       // if express app run under proxy with sub path URL
