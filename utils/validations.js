@@ -3,7 +3,8 @@
 const { validationResult } = require('express-validator');
 const { Op } = require('sequelize/dist');
 const User = require('../models/userModel');
-const Comment = require('../models/commentModel')
+const Comment = require('../models/commentModel');
+const Recipe = require('../models/recipeModel');
 
 const emailUnique = async (email, ownerId) => {
   ownerId = ownerId ? ownerId : -1;
@@ -31,6 +32,27 @@ const passwordsMatch = (value, {req}) => {
 const commentExists = async (value) => {
   const comment = await Comment.findOne({where: {id : value}})
   if (!comment) throw Error('No comment with that id exist')
+  return value;
+}
+
+const recipeExists = async (value) => {
+  const recipe = await Recipe.findOne({where: {id: value}})
+  if (!recipe) throw Error('no recipe with that id exists')
+  return value
+}
+
+/**
+ * 
+ * @param {[]} value 
+ * @param {{min: number, max: number}} options
+ */
+const arrayOfSize = (value, options) => {
+  if (value.length < (options.min || 1))
+    throw new Error('Collection has too few items.')
+
+  if (options.max && value.length > options.max)
+    throw new Error('Colleaction has too many items.')
+
   return value;
 }
 
@@ -62,5 +84,7 @@ module.exports = {
   emailUnique,
   nameUnique,
   passwordsMatch,
-  commentExists
+  commentExists,
+  arrayOfSize,
+  recipeExists
 };
