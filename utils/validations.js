@@ -1,7 +1,7 @@
 'use strict';
 
 const { validationResult } = require('express-validator');
-const { Op } = require('sequelize/dist');
+const { Op, Model } = require('sequelize/dist');
 const User = require('../models/userModel');
 const Comment = require('../models/commentModel');
 const Recipe = require('../models/recipeModel');
@@ -57,6 +57,12 @@ const recipeExists = async (value, res) => {
   return value
 }
 
+const canLike = async (value, Model, req) => {
+  const entry = await Model.findOne({where: {comment_id: value, user_id: req.user.id}})
+  if (entry) throw Error('Already liked')
+  return value
+}
+
 /**
  * Validates request body.
  *
@@ -87,5 +93,6 @@ module.exports = {
   passwordsMatch,
   commentExists,
   arrayOfSize,
-  recipeExists
+  recipeExists,
+  canLike,
 };

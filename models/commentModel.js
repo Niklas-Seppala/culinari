@@ -2,6 +2,9 @@
 const { Sequelize, Model } = require('sequelize');
 const sequelize = require('../database/sequelize_init.js');
 
+const fkName = require('../utils/fkName');
+const CommentLike = require('./commentLike.js');
+
 // define the table "comment"
 class Comment extends Model {}
 Comment.init(
@@ -22,7 +25,16 @@ Comment.init(
       allowNull: false,
     },
   },
-{
+  {
+    defaultScope: {
+      include: [
+        {
+          attributes: ['id', 'user_id'],
+          model: CommentLike,
+          as: fkName(CommentLike),
+        },
+      ]
+    },
     sequelize,
     freezeTableName: true,
     modelName: sequelize._TABLE_NAME_PREFIX + 'comment',

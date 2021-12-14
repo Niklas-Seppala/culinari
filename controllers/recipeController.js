@@ -112,8 +112,6 @@ const del = async (req, res) => {
 
 const post_like = async (req, res) => {
   const recipeId = req.params.id;
-
-
   try {
     const like = await Like.create({
       recipe_id: recipeId,
@@ -126,7 +124,6 @@ const post_like = async (req, res) => {
         .status(400)
         .json({ errors: [{ param: 'recipeId', msg: 'Recipe has already been liked' }] });
     }
-
     return res.status(500).json({ msg: 'Internal server error' });
   }
 };

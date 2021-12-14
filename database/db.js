@@ -13,7 +13,6 @@ console.log('ASSOCIATE');
 //Recipe.belongsTo(User);
 
 const fkName = require('../utils/fkName.js');
-
 const Picture = require('../models/pictureModel.js');
 const Recipe = require('../models/recipeModel.js');
 const User = require('../models/userModel.js');
@@ -22,10 +21,11 @@ const Like = require('../models/likeModel.js');
 const Ingredient = require('../models/ingredientModel.js');
 const RecipeIngredient = require('../models/recipeIngredientModel.js');
 const Step = require('../models/stepModel.js');
+const CommentLike = require('../models/commentLike')
 
 // define relations
 User.hasMany(Recipe, { as: fkName(Recipe), foreignKey: 'owner_id' });
-User.hasMany(Comment, { as: fkName(Comment), foreignKey: 'author_id' }); // FIX
+User.hasMany(Comment, { as: fkName(Comment), foreignKey: 'author_id' });
 User.hasMany(Like, { as: fkName(Like), foreignKey: 'user_id' });
 
 //many-to-many relationship between ingredient and recipe
@@ -35,6 +35,8 @@ Ingredient.belongsToMany(Recipe, {as: fkName(Recipe),  through: RecipeIngredient
 Recipe.hasMany(Picture, { as: fkName(Picture), foreignKey: 'recipe_id' });
 Recipe.hasMany(Step, { as: fkName(Step), foreignKey: 'recipe_id' });
 Recipe.hasMany(Comment, { as: fkName(Comment), foreignKey: 'author_id' });
+Recipe.hasMany(Like, {as: fkName(Like), foreignKey: 'recipe_id'});
+Comment.hasMany(CommentLike, {as: fkName(CommentLike), foreignKey: 'comment_id'})
 
 const forceUpdate = process.env.DB_FORCE_UPDATE == 1;
 const alterUpdate = process.env.DB_ALTER_UPDATE == 1;
@@ -122,6 +124,7 @@ module.exports = {
   Recipe,
   Comment,
   Like,
+  CommentLike,
   Picture,
   Ingredient,
 };
