@@ -54,16 +54,8 @@ const post = async (req, res) => {
 };
 
 const put = async (req, res) => {
-  const recipeId = req.params.id;
-
   try {
-    const recipe = await Recipe.scope('includeForeignKeys').findOne({
-      where: { id: recipeId, owner_id: req.user.id },
-    });
-    if (!recipe) {
-      return res.status(404).json({ errors: [{ msg: 'No such recipe exists' }] });
-    }
-
+    const recipeId = req.params.id;
     await Recipe.update(
       {
         name: req.body.name,
@@ -87,7 +79,7 @@ const put = async (req, res) => {
     await Step.destroy({ where: { recipe_id: recipeId } });
     await Step.bulkCreate(
       [...req.body.instructions].map(item => {
-        item.recipe_id = recipe.id;
+        item.recipe_id = recipeId;
         return item;
       })
     );
@@ -117,19 +109,19 @@ const del = async (req, res) => {
   }
 };
 
-const recipe_like_add = async (req, res) => {
-  const recipeId = req.params.recipeId;
+const post_like = async (req, res) => {
+  const recipeId = req.params.id;
 
-  //validate that recipe exists
-  const recipe = await Recipe.findOne({
-    where: { id: recipeId },
-  });
+  // //validate that recipe exists
+  // const recipe = await Recipe.findOne({
+  //   where: { id: recipeId },
+  // });
 
-  if (!recipe) {
-    return res
-      .status(400)
-      .json({ errors: [{ param: 'recipeId', msg: 'Recipe not found' }] });
-  }
+  // if (!recipe) {
+  //   return res
+  //     .status(400)
+  //     .json({ errors: [{ param: 'recipeId', msg: 'Recipe not found' }] });
+  // }
 
   try {
     const like = await Like.create({
@@ -148,19 +140,19 @@ const recipe_like_add = async (req, res) => {
   }
 };
 
-const recipe_like_delete = async (req, res) => {
-  const recipeId = req.params.recipeId;
+const del_like = async (req, res) => {
+  const recipeId = req.params.id;
 
   //validate that recipe exists
-  const recipe = await Recipe.findOne({
-    where: { id: recipeId },
-  });
+  // const recipe = await Recipe.findOne({
+  //   where: { id: recipeId },
+  // });
 
-  if (!recipe) {
-    return res
-      .status(400)
-      .json({ errors: [{ param: 'recipeId', msg: 'Recipe not found' }] });
-  }
+  // if (!recipe) {
+  //   return res
+  //     .status(400)
+  //     .json({ errors: [{ param: 'recipeId', msg: 'Recipe not found' }] });
+  // }
 
   try {
     let like = await Like.findOne({
@@ -188,6 +180,6 @@ module.exports = {
   post,
   put,
   del,
-  recipe_like_add,
-  recipe_like_delete,
+  post_like,
+  del_like,
 };

@@ -3,6 +3,7 @@
 const { validationResult } = require('express-validator');
 const { Op } = require('sequelize/dist');
 const User = require('../models/userModel');
+const Recipe = require('../models/recipeModel')
 
 const emailUnique = async (email, ownerId) => {
   ownerId = ownerId ? ownerId : -1;
@@ -42,6 +43,12 @@ const arrayOfSize = (value, options) => {
   return value;
 }
 
+const recipeExists = async (value, res) => {
+  const recipe = await Recipe.findOne({where: {id: value}})
+  if (!recipe) throw Error('no recipe with that id exists')
+  return value
+}
+
 /**
  * Validates request body.
  *
@@ -70,5 +77,6 @@ module.exports = {
   emailUnique,
   nameUnique,
   passwordsMatch,
-  arrayOfSize
+  arrayOfSize,
+  recipeExists
 };

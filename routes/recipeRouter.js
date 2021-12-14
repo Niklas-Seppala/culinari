@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('../utils/pass.js');
 const recipeController = require('../controllers/recipeController');
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const validation = require('../utils/validations');
 
 router
@@ -32,6 +32,7 @@ router
 
   .put(
     passport.authenticate('jwt', { session: false }),
+    param('id').custom(async val => await validation.recipeExists(val)),
     body('name').trim().escape().isLength({ min: 2 }),
     body('desc').trim().escape().notEmpty().isLength({ max: 160 }),
     body('ingredients.*.name').trim().escape().notEmpty(),
@@ -50,14 +51,18 @@ router
   .delete(passport.authenticate('jwt', { session: false }), recipeController.del);
 
 router
-  .route('/:recipeId/like')
+  .route('/:id/like')
   .post(
     passport.authenticate('jwt', { session: false }),
-    recipeController.recipe_like_add
+    param('id').custom(async (val) => await validation.recipeExists(val)),
+    validation.solve,
+    recipeController.post_like
   )
   .delete(
     passport.authenticate('jwt', { session: false }),
-    recipeController.recipe_like_delete
+    param('id').custom(async val => await validation.recipeExists(val)),
+    validation.solve,
+    recipeController.del_like
   );
 
 module.exports = router;
