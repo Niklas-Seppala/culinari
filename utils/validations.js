@@ -3,7 +3,8 @@
 const { validationResult } = require('express-validator');
 const { Op } = require('sequelize/dist');
 const User = require('../models/userModel');
-const Recipe = require('../models/recipeModel')
+const Comment = require('../models/commentModel');
+const Recipe = require('../models/recipeModel');
 
 const emailUnique = async (email, ownerId) => {
   ownerId = ownerId ? ownerId : -1;
@@ -27,6 +28,13 @@ const passwordsMatch = (value, {req}) => {
   if (value !== req.body.password) throw new Error("Passwords don't match");
   else return value;
 }
+
+const commentExists = async (value) => {
+  const comment = await Comment.findOne({where: {id : value}})
+  if (!comment) throw Error('No comment with that id exist')
+  return value;
+}
+
 
 /**
  * 
@@ -77,6 +85,7 @@ module.exports = {
   emailUnique,
   nameUnique,
   passwordsMatch,
+  commentExists,
   arrayOfSize,
   recipeExists
 };

@@ -5,23 +5,26 @@ const Picture = require('./pictureModel.js');
 const Ingredient = require('./ingredientModel.js');
 const RecipeIngredient = require('./recipeIngredientModel.js');
 const Step = require('./stepModel.js');
+const Comment = require('./commentModel')
 
 const fkName = require('../utils/fkName.js');
 
 const toJSON = function() {
   let values = Object.assign({}, this.get());
-  const table = RecipeIngredient.model.getTableName();
-
-  // flatten the recipeIngredient portion of the json
-  //so the values are in a single depth object for each
-  values.ingredient.forEach((ingredient) => {
-    ingredient.dataValues.unit = ingredient.dataValues[table].unit;
-    ingredient.dataValues.amount = ingredient.dataValues[table].amount;
-    delete ingredient.dataValues[table]    
-  });
-  
-  return values;
+  try {
+    const table = RecipeIngredient.model.getTableName();
+    // flatten the recipeIngredient portion of the json
+    //so the values are in a single depth object for each
+    values.ingredient.forEach((ingredient) => {
+      ingredient.dataValues.unit = ingredient.dataValues[table].unit;
+      ingredient.dataValues.amount = ingredient.dataValues[table].amount;
+      delete ingredient.dataValues[table]    
+    });
+  } catch (error) {
+    console.error(error)
   }
+  return values;
+}
 
 // define the table "recipe"
 class Recipe extends Model {}
@@ -76,6 +79,11 @@ Recipe.addScope('includeForeignKeys', {
       attributes: ['id', 'content', 'order'],
       model: Step,
       as: fkName(Step),
+    },
+    {
+      attributes: ['text', 'author_id', 'createdAt'],
+      model: Comment,
+      as: fkName(Comment),
     },
   ],
 });

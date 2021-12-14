@@ -5,6 +5,7 @@ const Step = require('../models/stepModel.js');
 const fkName = require('../utils/fkName');
 const Like = require('../models/likeModel.js');
 
+
 const get_single = async (req, res) => {
   const recipe = await Recipe.scope('includeForeignKeys').findOne({
     where: { id: req.params.id },
@@ -112,16 +113,6 @@ const del = async (req, res) => {
 const post_like = async (req, res) => {
   const recipeId = req.params.id;
 
-  // //validate that recipe exists
-  // const recipe = await Recipe.findOne({
-  //   where: { id: recipeId },
-  // });
-
-  // if (!recipe) {
-  //   return res
-  //     .status(400)
-  //     .json({ errors: [{ param: 'recipeId', msg: 'Recipe not found' }] });
-  // }
 
   try {
     const like = await Like.create({
@@ -140,20 +131,9 @@ const post_like = async (req, res) => {
   }
 };
 
+
 const del_like = async (req, res) => {
   const recipeId = req.params.id;
-
-  //validate that recipe exists
-  // const recipe = await Recipe.findOne({
-  //   where: { id: recipeId },
-  // });
-
-  // if (!recipe) {
-  //   return res
-  //     .status(400)
-  //     .json({ errors: [{ param: 'recipeId', msg: 'Recipe not found' }] });
-  // }
-
   try {
     let like = await Like.findOne({
       where: {

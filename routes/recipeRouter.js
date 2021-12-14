@@ -60,7 +60,7 @@ router
   )
   .delete(
     passport.authenticate('jwt', { session: false }),
-    param('id').custom(async val => await validation.recipeExists(val)),
+    param('id').custom(async (val) => await validation.recipeExists(val)),
     validation.solve,
     recipeController.del_like
   );
