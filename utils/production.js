@@ -27,8 +27,11 @@ module.exports = (app, httpsPort, httpPort, options) => {
       // then, in your .env, set PROXY_PASS=/app
       // Adapt to your proxy settings!
       const proxypath = process.env.PROXY_PASS || '';
+
+      const hostUrl= req.headers.host.split(':')[0];
+
       // request was via http, so redirect to https
-      const redirectUrl = `https://${req.headers.host}${proxypath}${req.url}`;
+      const redirectUrl = `https://${hostUrl}:${httpsPort}${proxypath}${req.url}`;
       console.log(`host: ${req.headers.host}\npp: ${proxypath}\nreq.url:${req.url}`);
       console.log(`redirecting to ${redirectUrl}`);
       res.redirect(301, redirectUrl);
