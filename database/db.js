@@ -34,6 +34,7 @@ Ingredient.belongsToMany(Recipe, {as: fkName(Recipe),  through: RecipeIngredient
 
 Recipe.hasMany(Picture, { as: fkName(Picture), foreignKey: 'recipe_id' });
 Recipe.hasMany(Step, { as: fkName(Step), foreignKey: 'recipe_id' });
+Recipe.hasMany(Comment, { as: fkName(Comment), foreignKey: 'author_id' });
 
 const forceUpdate = process.env.DB_FORCE_UPDATE == 1;
 const alterUpdate = process.env.DB_ALTER_UPDATE == 1;

@@ -5,6 +5,7 @@ const Picture = require('./pictureModel.js');
 const Ingredient = require('./ingredientModel.js');
 const RecipeIngredient = require('./recipeIngredientModel.js');
 const Step = require('./stepModel.js');
+const Comment = require('./commentModel')
 
 const fkName = require('../utils/fkName.js');
 
@@ -78,6 +79,11 @@ Recipe.addScope('includeForeignKeys', {
       attributes: ['id', 'content', 'order'],
       model: Step,
       as: fkName(Step),
+    },
+    {
+      attributes: ['text', 'author_id', 'createdAt'],
+      model: Comment,
+      as: fkName(Comment),
     },
   ],
 });
