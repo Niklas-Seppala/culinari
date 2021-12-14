@@ -6,6 +6,7 @@ const { unlink } = require('fs');
 const Recipe = require('../models/recipeModel.js');
 const Ingredient = require('../models/ingredientModel.js');
 const Step = require('../models/stepModel.js');
+const Like = require('../models/likeModel.js');
 const Picture = require('../models/pictureModel.js');
 
 /**
@@ -36,7 +37,7 @@ const recipe_get = async (req, res) => {
     where: { id: recipeId },
   });
   console.log('recipeId', recipeId);
-  console.log('recipe', recipe);
+
   if(!recipe) {
     return res.status(400).json({error: "Recipe not found"});
   }
@@ -404,6 +405,69 @@ const recipe_step_add = async (req,res) => {
     return res.json(newStep)
 }
 
+const recipe_like_add = async (req, res) => {
+    const recipeId = req.params.recipeId;
+
+    //validate that recipe exists
+    const recipe = await Recipe.findOne({
+        where: {id: recipeId}
+    });
+
+    if(!recipe) {
+        return res.status(400).json({errors: [{param: 'recipeId', msg: 'Recipe not found'}]});
+    }
+
+    try {
+        const like = await Like.create({
+            recipe_id: recipeId,
+            user_id: req.user.id
+        });
+        return res.json(like);
+    } catch (error) {
+
+        if(error.name == 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({errors: [{param: 'recipeId', msg: 'Recipe has already been liked'}]});
+        }
+
+        return res.status(500).json({msg: 'Internal server error'});
+    }
+
+};
+
+const recipe_like_delete = async (req, res) => {
+    const recipeId = req.params.recipeId;
+
+    //validate that recipe exists
+    const recipe = await Recipe.findOne({
+        where: {id: recipeId}
+    });
+
+    if(!recipe) {
+        return res.status(400).json({errors: [{param: 'recipeId', msg: 'Recipe not found'}]});
+    }
+
+    try {
+        let like = await Like.findOne(
+            {
+                where: {
+                    recipe_id: recipeId,
+                    user_id: req.user.id
+                }
+            }
+        );
+        if(like){
+          await like.destroy();
+          return res.json({msg: 'Succesfully unliked recipe'});
+        } 
+        else {
+            return res.status(400).json({errors: [{param: '', msg: 'Could not unlike recipe.'}]})
+        }
+    } catch (error) {
+
+        return res.status(500).json({msg: 'Internal server error'});
+    }
+
+};
 
 
 module.exports = {
@@ -419,5 +483,7 @@ module.exports = {
   recipe_step_update,
   recipe_step_delete,
   recipe_ingredient_add,
-  recipe_step_add
+  recipe_step_add,
+  recipe_like_add,
+  recipe_like_delete
 };
