@@ -117,7 +117,9 @@ const post_like = async (req, res) => {
       recipe_id: recipeId,
       user_id: req.user.id,
     });
-    return res.json(like);
+    const newVal = await Like.findOne({where: {id: like.id}})
+
+    return res.json(newVal);
   } catch (error) {
     if (error.name == 'SequelizeUniqueConstraintError') {
       return res

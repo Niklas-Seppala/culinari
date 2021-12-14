@@ -19,7 +19,7 @@ Like.init(
       unique: 'userRecipeIndex'
     },
   },
-{
+  {
     sequelize,
     freezeTableName: true,
     modelName: sequelize._TABLE_NAME_PREFIX + 'like',

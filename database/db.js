@@ -34,7 +34,7 @@ Ingredient.belongsToMany(Recipe, {as: fkName(Recipe),  through: RecipeIngredient
 
 Recipe.hasMany(Picture, { as: fkName(Picture), foreignKey: 'recipe_id' });
 Recipe.hasMany(Step, { as: fkName(Step), foreignKey: 'recipe_id' });
-Recipe.hasMany(Comment, { as: fkName(Comment), foreignKey: 'author_id' });
+Recipe.hasMany(Comment, { as: fkName(Comment), foreignKey: 'recipe_id' });
 Recipe.hasMany(Like, {as: fkName(Like), foreignKey: 'recipe_id'});
 Comment.hasMany(CommentLike, {as: fkName(CommentLike), foreignKey: 'comment_id'})
 

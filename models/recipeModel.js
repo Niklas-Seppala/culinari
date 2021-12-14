@@ -87,7 +87,7 @@ Recipe.addScope('includeForeignKeys', {
       as: fkName(Step),
     },
     {
-      attributes: ['text', 'author_id', 'createdAt'],
+      attributes: ['text', 'author_id', 'createdAt', 'id'],
       model: Comment,
       as: fkName(Comment),
     },

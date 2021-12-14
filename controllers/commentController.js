@@ -1,7 +1,6 @@
 'use strict';
 const CommentLike = require('../models/commentLike');
 const Comment = require('../models/commentModel');
-const Like = require('../models/likeModel');
 
 const get_all = async (req, res) => {
   try {
@@ -27,7 +26,8 @@ const post = async (req, res) => {
       text: req.body.text,
       recipe_id: req.body.recipe,
     });
-    return res.json(comment);
+    const newComment = await Comment.findOne({where: {id: comment.id}})
+    return res.json(newComment);
   } catch (err) {
     console.error(err);
     res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
