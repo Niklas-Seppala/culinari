@@ -8,6 +8,9 @@ const Picture = require('../models/pictureModel.js');
 
 const validation = require('../utils/validations');
 
+const numberOfRecipes = 10;
+let page = 0;
+
 const get_single = async (req, res) => {
   const recipe = await Recipe.scope('includeForeignKeys').findOne({
     where: { id: req.params.id },
@@ -19,7 +22,9 @@ const get_single = async (req, res) => {
 };
 
 const get_all = async (req, res) => {
-  const recipes = await Recipe.scope('includeForeignKeys').findAll();
+  const recipes = await (await Recipe.scope('includeForeignKeys').findAll()).slice(page*numberOfRecipes, (page+1)*numberOfRecipes);
+  page = page + 1;
+  if (recipes.length === 0) page = 0;
   return res.json(recipes);
 };
 
