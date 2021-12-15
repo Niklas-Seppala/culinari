@@ -4,6 +4,7 @@ const Ingredient = require('../models/ingredientModel.js');
 const Step = require('../models/stepModel.js');
 const fkName = require('../utils/fkName');
 const Like = require('../models/likeModel.js');
+const Picture = require('../models/pictureModel.js');
 
 
 const get_single = async (req, res) => {
@@ -153,6 +154,26 @@ const del_like = async (req, res) => {
   }
 };
 
+const post_img = async (req, res, next) => {
+  try {
+    if (req.files) {
+      const imgs = req.files.map((file, i) => {
+        return {
+          recipe_id: req.params.id,
+          filename: file.filename,
+          order: i
+        }
+      })
+      await Picture.bulkCreate(imgs)
+    }
+    res.status(200).json({msg:'ok'})
+    next();
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+
 module.exports = {
   get_all,
   get_single,
@@ -161,4 +182,5 @@ module.exports = {
   del,
   post_like,
   del_like,
+  post_img,
 };

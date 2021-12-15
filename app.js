@@ -28,11 +28,17 @@ const userRouter = require('./routes/userRouter');
 
 const recipeRouter = require('./routes/recipeRouter');
 const commentRouter = require('./routes/commentRouter');
-const pictureRouter = require('./routes/pictureRouter');
 const ingredientRouter = require('./routes/ingredientRouter');
 
 const passport = require('./utils/pass.js');
 const authRoute = require('./routes/authRoute.js');
+const resize = require('./utils/resize');
+
+resize.configure({
+  outDir: './static',
+  srcDir: './uploads',
+  dim: { x: 350, y: 300 },
+});
 
 console.log(
   `Starting local port: ${process.env.HTTP_PORT} https port: ${process.env.HTTPS_PORT} port: ${process.env.PORT}`
@@ -71,10 +77,9 @@ app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swagger_docs, swaggerOptions
 app.use('/auth', authRoute);
 app.use('/recipe', recipeRouter);
 app.use('/comment', commentRouter);
-app.use('/picture', pictureRouter);
 app.use('/ingredient', ingredientRouter);
 app.use('/user', userRouter);
-app.use('/uploads', express.static('uploads'));
+app.use('/static', express.static('static'));
 
 app.use((err, req, res, next) => {
   console.log('Error!');

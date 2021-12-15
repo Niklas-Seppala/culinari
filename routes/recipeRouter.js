@@ -5,6 +5,7 @@ const passport = require('../utils/pass.js');
 const recipeController = require('../controllers/recipeController');
 const { body, param } = require('express-validator');
 const validation = require('../utils/validations');
+const files = require('../utils/fileupload.js');
 
 router
   .route('/')
@@ -64,5 +65,14 @@ router
     validation.solve,
     recipeController.del_like
   );
+
+router.route('/:id/img')
+  .post(
+    passport.authenticate('jwt', {session: false}),
+    param('id').custom(async (val) => await validation.recipeExists(val)),
+    validation.solve,
+    files.upload,
+    recipeController.post_img,
+    files.processImages)
 
 module.exports = router;
