@@ -41,4 +41,12 @@ router
     validation.solve,
     commentController.del)
 
+router.route('/:id/like')
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    param('id').custom(async (val) => await validation.commentExists(val)),
+    validation.solve,
+    commentController.post_like
+  )
+
 module.exports = router;

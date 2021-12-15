@@ -3,27 +3,25 @@ const { Sequelize, Model } = require('sequelize');
 const sequelize = require('../database/sequelize_init.js');
 
 // define the table "like"
-class Like extends Model {}
-Like.init(
+class CommentLike extends Model {}
+CommentLike.init(
   {
-    recipe_id: {
+    comment_id: {
       type: Sequelize.INTEGER,
-      field: 'recipe_id',
+      field: 'comment_id',
       allowNull: false,
-      unique: 'userRecipeIndex'
     },
     user_id: {
       type: Sequelize.INTEGER,
       field: 'user_id',
       allowNull: false,
-      unique: 'userRecipeIndex'
     },
   },
   {
     sequelize,
     freezeTableName: true,
-    modelName: sequelize._TABLE_NAME_PREFIX + 'like',
+    modelName: sequelize._TABLE_NAME_PREFIX + 'commentLike',
   }
 );
 
-module.exports = Like;
+module.exports = CommentLike;

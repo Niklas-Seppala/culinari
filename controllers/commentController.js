@@ -1,4 +1,5 @@
 'use strict';
+const CommentLike = require('../models/commentLike');
 const Comment = require('../models/commentModel');
 
 const get_all = async (req, res) => {
@@ -25,7 +26,8 @@ const post = async (req, res) => {
       text: req.body.text,
       recipe_id: req.body.recipe,
     });
-    return res.json(comment);
+    const newComment = await Comment.findOne({where: {id: comment.id}})
+    return res.json(newComment);
   } catch (err) {
     console.error(err);
     res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
@@ -45,13 +47,33 @@ const put = async (req, res) => {
 
 const del = async (req, res) => {
   try {
-    const comment = await Comment.findOne({where: {id: req.params.id}})
+    const comment = await Comment.findOne({ where: { id: req.params.id } });
     comment.destroy();
-    return res.json({msg: 'ok'})
+    return res.json({ msg: 'ok' });
   } catch (err) {
-    return res.status(500).json({errors: [{msg: 'Internal server error'}]})
+    return res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
   }
-}
+};
+
+const post_like = async (req, res) => {
+  try {
+    const existing = await CommentLike.findOne({where: {comment_id: req.params.id, user_id: req.user.id}})
+    if(existing) {
+      // Dislike comment
+      existing.destroy();
+      return res.json({ OP: 'DEL' });
+    }
+    // Like comment
+    const like = await CommentLike.create({
+      comment_id: req.params.id,
+      user_id: req.user.id,
+    });
+    return res.json({OP: 'POST', data: like});
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ msg: 'Internal server error' });
+  }
+};
 
 module.exports = {
   get_all,
@@ -59,4 +81,5 @@ module.exports = {
   post,
   put,
   del,
+  post_like,
 };
