@@ -64,7 +64,7 @@ Recipe.prototype.toJSON = toJSON;
 
 Recipe.addScope('includeForeignKeys', {
   attributes: {
-    exclude: ['createdAt', "updatedAt"]
+    exclude: ["updatedAt"]
   },
   include: [
     {
