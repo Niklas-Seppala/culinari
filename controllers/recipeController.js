@@ -110,10 +110,19 @@ const put = async (req, res) => {
 };
 
 const del = async (req, res) => {
+
   try {
+    let whereParams = { id: req.params.id, owner_id: req.user.id };
+
+    if(req.user.role == 1) {
+        // don't check the owner_id if the user is an admin
+        delete whereParams.owner_id;
+    }
+
     let recipe = await Recipe.scope('includeForeignKeys').findOne({
-      where: { id: req.params.id, owner_id: req.user.id },
+      where: whereParams,
     });
+
     if (!recipe) {
       return res.status(404).json({ errors: [{ msg: 'No such recipe' }] });
     }
