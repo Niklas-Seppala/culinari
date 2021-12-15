@@ -57,33 +57,20 @@ const del = async (req, res) => {
 
 const post_like = async (req, res) => {
   try {
+    const existing = await CommentLike.findOne({where: {comment_id: req.params.id, user_id: req.user.id}})
+    if(existing) {
+      // Dislike comment
+      existing.destroy();
+      return res.json({ OP: 'DEL' });
+    }
+    // Like comment
     const like = await CommentLike.create({
       comment_id: req.params.id,
       user_id: req.user.id,
     });
-    return res.json(like);
+    return res.json({OP: 'POST', data: like});
   } catch (error) {
-    return res.status(500).json({ msg: 'Internal server error' });
-  }
-};
-
-const del_like = async (req, res) => {
-  try {
-    let like = await CommentLike.findOne({
-      where: {
-        comment_id: req.params.id,
-        user_id: req.user.id,
-      },
-    });
-    if (like) {
-      await like.destroy();
-      return res.json({ msg: 'ok' });
-    } else {
-      return res
-        .status(403)
-        .json({ errors: [{ param: '', msg: 'forbidden' }] });
-    }
-  } catch (error) {
+    console.log(error)
     return res.status(500).json({ msg: 'Internal server error' });
   }
 };
@@ -95,5 +82,4 @@ module.exports = {
   put,
   del,
   post_like,
-  del_like,
 };
