@@ -156,10 +156,9 @@ const post_img = async (req, res, next) => {
           order: i,
         };
       });
-      await Picture.bulkCreate(imgs);
+      const asd = await Picture.bulkCreate(imgs);
+      res.status(200).json(asd);
     }
-    res.status(200).json({ msg: 'ok' });
-    next();
   } catch (error) {
     console.log(error);
     next(error);
