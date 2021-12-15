@@ -39,6 +39,12 @@ router
   );
 
 // Public get single user
-router.route('/:id').get(userController.user_get);
+router.route('/:id').get(userController.user_get)
+  
+  // admin delete user
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    userController.user_delete
+  )
 
 module.exports = router;

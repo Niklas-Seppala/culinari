@@ -46,6 +46,11 @@ User.init(
   }
 );
 
+User.prototype.isAdmin = function() {
+  let values = Object.assign({}, this.get());
+  console.log(values);
+};
+
 User.addScope('includeRecipes', {
   include: [
     {
