@@ -36,7 +36,12 @@ Recipe.hasMany(Picture, { as: fkName(Picture), foreignKey: 'recipe_id' });
 Recipe.hasMany(Step, { as: fkName(Step), foreignKey: 'recipe_id' });
 Recipe.hasMany(Comment, { as: fkName(Comment), foreignKey: 'recipe_id' });
 Recipe.hasMany(Like, {as: fkName(Like), foreignKey: 'recipe_id'});
-Comment.hasMany(CommentLike, {as: fkName(CommentLike), foreignKey: 'comment_id'})
+Comment.hasMany(CommentLike, {as: fkName(CommentLike), foreignKey: 'comment_id'});
+
+Recipe.hasMany(Recipe, {
+ as: 'fork', // special case, don't use fkName() as its a self-referential relationship
+ foreignKey: 'forked_from'
+});
 
 const forceUpdate = process.env.DB_FORCE_UPDATE == 1;
 const alterUpdate = process.env.DB_ALTER_UPDATE == 1;

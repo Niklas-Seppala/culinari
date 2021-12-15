@@ -28,6 +28,7 @@ const post = async (req, res) => {
       name: req.body.name,
       desc: req.body.desc,
       owner_id: req.user.id,
+      forked_from: req.body.forked_from||null,
       ingredient: req.body.ingredients.map(ing => {
         return {
           name: ing.name,
