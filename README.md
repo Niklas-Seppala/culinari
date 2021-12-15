@@ -1,3 +1,5 @@
-# wop-starters
+# Culinari
 
-Choose a branch and download as zip.
+## Installation
+* clone this repository
+

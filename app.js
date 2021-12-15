@@ -41,7 +41,7 @@ resize.configure({
 });
 
 console.log(
-  `Starting local port: ${process.env.HTTP_PORT} https port: ${process.env.HTTPS_PORT} port: ${process.env.PORT}`
+  `Starting local port: ${process.env.HTTP_PORT} https port: ${process.env.HTTPS_PORT} port: ${process.env.HTTPS_PORT}`
 );
 
 app.use(express.json());
@@ -53,7 +53,7 @@ app.enable('trust proxy');
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 if (process.env.NODE_ENV === 'production') {
   console.log('Node env prod');
-  require('./utils/production')(app, process.env.PORT, process.env.HTTP_PORT, options);
+  require('./utils/production')(app, process.env.HTTPS_PORT, process.env.HTTP_PORT, options);
 } else {
   console.log('Node env localhost');
   require('./utils/localhost')(
