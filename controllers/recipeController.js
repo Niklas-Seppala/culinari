@@ -6,6 +6,8 @@ const fkName = require('../utils/fkName');
 const Like = require('../models/likeModel.js');
 const Picture = require('../models/pictureModel.js');
 
+const validation = require('../utils/validations');
+
 
 const get_single = async (req, res) => {
   const recipe = await Recipe.scope('includeForeignKeys').findOne({
@@ -23,25 +25,33 @@ const get_all = async (req, res) => {
 };
 
 const post = async (req, res) => {
-  const recipe = await Recipe.create(
-    {
-      name: req.body.name,
-      desc: req.body.desc,
-      owner_id: req.user.id,
-      forked_from: req.body.forked_from||null,
-      ingredient: req.body.ingredients.map(ing => {
-        return {
-          name: ing.name,
-          culinari_recipeIngredient: {
-            amount: ing.amount,
-            unit: ing.unit,
-          },
-        };
-      }),
-    },
-    { include: [{ model: Ingredient, as: fkName(Ingredient) }] }
-  );
-
+  try {
+    const recipe = await Recipe.create(
+      {
+        name: req.body.name,
+        desc: req.body.desc,
+        owner_id: req.user.id,
+        forked_from: req.body.forked_from||null,
+        ingredient: req.body.ingredients.map(ing => {
+          return {
+            name: ing.name,
+            culinari_recipeIngredient: {
+              amount: ing.amount,
+              unit: ing.unit,
+            },
+          };
+        }),
+      },
+      { include: [{ model: Ingredient, as: fkName(Ingredient) }] }
+    );
+  } catch (error) {
+    if(error.name == 'SequelizeForeignKeyConstraintError') {
+        return res.status(404).json({ errors: [{param: 'forked_from', msg: 'No recipe with such id exists.' }] });
+    }
+    else {
+        return res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+    }
+  }
   await Step.bulkCreate(
     [...req.body.instructions].map(item => {
       item.recipe_id = recipe.id;
