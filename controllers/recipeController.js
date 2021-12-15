@@ -7,6 +7,9 @@ const Like = require('../models/likeModel.js');
 const Picture = require('../models/pictureModel.js');
 
 const validation = require('../utils/validations');
+const { deletePicturesFromRecipes } = require('../utils/deletePictures');
+
+
 
 const get_single = async (req, res) => {
   const recipe = await Recipe.scope('includeForeignKeys').findOne({
@@ -110,13 +113,27 @@ const put = async (req, res) => {
 };
 
 const del = async (req, res) => {
+
   try {
+    let whereParams = { id: req.params.id, owner_id: req.user.id };
+
+    if(req.user.role == 1) {
+        // don't check the owner_id if the user is an admin
+        delete whereParams.owner_id;
+    }
+
     let recipe = await Recipe.scope('includeForeignKeys').findOne({
-      where: { id: req.params.id, owner_id: req.user.id },
+      where: whereParams,
     });
+
     if (!recipe) {
       return res.status(404).json({ errors: [{ msg: 'No such recipe' }] });
     }
+
+    // delete the image files
+    deletePicturesFromRecipes([recipe]);
+
+
     await recipe.destroy();
     return res.json({ msg: 'ok' });
   } catch (error) {
@@ -149,6 +166,7 @@ const post_like = async (req, res) => {
 const post_img = async (req, res, next) => {
   try {
     if (req.files) {
+        console.log(req.files);
       const imgs = req.files.map((file, i) => {
         return {
           recipe_id: req.params.id,
