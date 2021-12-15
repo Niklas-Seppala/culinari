@@ -17,7 +17,7 @@ const toJSON = function() {
     // flatten the recipeIngredient portion of the json
     //so the values are in a single depth object for each
     if(values) {
-      values.ingredient.forEach((ingredient) => {
+      values.ingredient?.forEach((ingredient) => {
         ingredient.dataValues.unit = ingredient.dataValues[table].unit;
         ingredient.dataValues.amount = ingredient.dataValues[table].amount;
         delete ingredient.dataValues[table]
