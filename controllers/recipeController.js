@@ -158,6 +158,7 @@ const post_like = async (req, res) => {
 const post_img = async (req, res, next) => {
   try {
     if (req.files) {
+        console.log(req.files);
       const imgs = req.files.map((file, i) => {
         return {
           recipe_id: req.params.id,
