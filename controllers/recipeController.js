@@ -7,6 +7,9 @@ const Like = require('../models/likeModel.js');
 const Picture = require('../models/pictureModel.js');
 
 const validation = require('../utils/validations');
+const { deletePicturesFromRecipes } = require('../utils/deletePictures');
+
+
 
 const get_single = async (req, res) => {
   const recipe = await Recipe.scope('includeForeignKeys').findOne({
@@ -126,6 +129,11 @@ const del = async (req, res) => {
     if (!recipe) {
       return res.status(404).json({ errors: [{ msg: 'No such recipe' }] });
     }
+
+    // delete the image files
+    deletePicturesFromRecipes([recipe]);
+
+
     await recipe.destroy();
     return res.json({ msg: 'ok' });
   } catch (error) {

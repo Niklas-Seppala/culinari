@@ -6,6 +6,8 @@ const bcryptjs = require('bcryptjs');
 const { unlink } = require('fs');
 const path = require('path');
 
+const { deletePicturesFromRecipes } = require('../utils/deletePictures');
+
 const user_get = async (req, res) => {
   /* #swagger.parameters['user'] = { 
     in: 'body',
@@ -62,20 +64,9 @@ const user_delete = async (req, res) => {
   const pictures = recipes.flatMap(r => r.dataValues.picture)
   console.log("recipes",recipes);
   console.log(pictures);
-  
-  
-  // delete the files itself first
-  pictures.forEach((picture) => {
-    console.log("DELETING", picture.dataValues.filename, "FROM RECIPE", picture.dataValues.recipe_id);
-    let delPath = path.join('./uploads', path.basename(picture.dataValues.filename))
-    unlink(delPath, (err) => {
-      if(err) {
-        console.log(`Cannot delete picture ${delPath}`, err)
-      }
-    });
-  });
+  deletePicturesFromRecipes(recipes);
 
-  // then delete the user, this deletes all the rest
+  // then delete the user, this deletes all the rest of the things related to them
   try {
     await User.destroy({where: {id: user.dataValues.id}});
   } catch (error) {
