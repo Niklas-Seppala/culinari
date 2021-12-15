@@ -16,11 +16,13 @@ const toJSON = function() {
     const table = RecipeIngredient.model.getTableName();
     // flatten the recipeIngredient portion of the json
     //so the values are in a single depth object for each
-    values.ingredient.forEach((ingredient) => {
-      ingredient.dataValues.unit = ingredient.dataValues[table].unit;
-      ingredient.dataValues.amount = ingredient.dataValues[table].amount;
-      delete ingredient.dataValues[table]    
-    });
+    if(values) {
+      values.ingredient?.forEach((ingredient) => {
+        ingredient.dataValues.unit = ingredient.dataValues[table].unit;
+        ingredient.dataValues.amount = ingredient.dataValues[table].amount;
+        delete ingredient.dataValues[table]
+      });
+    }
   } catch (error) {
     console.error(error)
   }
@@ -90,6 +92,11 @@ Recipe.addScope('includeForeignKeys', {
       attributes: ['text', 'author_id', 'createdAt', 'id'],
       model: Comment,
       as: fkName(Comment),
+    },
+    {
+      attributes: ['name', 'desc', 'owner_id', 'forked_from'],
+      model: Recipe,
+      as: 'fork',
     },
   ],
 });

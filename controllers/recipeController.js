@@ -6,6 +6,7 @@ const fkName = require('../utils/fkName');
 const Like = require('../models/likeModel.js');
 const Picture = require('../models/pictureModel.js');
 
+const validation = require('../utils/validations');
 
 const get_single = async (req, res) => {
   const recipe = await Recipe.scope('includeForeignKeys').findOne({
@@ -23,36 +24,48 @@ const get_all = async (req, res) => {
 };
 
 const post = async (req, res) => {
-  const recipe = await Recipe.create(
-    {
-      name: req.body.name,
-      desc: req.body.desc,
-      owner_id: req.user.id,
-      ingredient: req.body.ingredients.map(ing => {
-        return {
-          name: ing.name,
-          culinari_recipeIngredient: {
-            amount: ing.amount,
-            unit: ing.unit,
-          },
-        };
-      }),
-    },
-    { include: [{ model: Ingredient, as: fkName(Ingredient) }] }
-  );
+  try {
+    const recipe = await Recipe.create(
+      {
+        name: req.body.name,
+        desc: req.body.desc,
+        owner_id: req.user.id,
+        forked_from: req.body.forked_from || null,
+        ingredient: req.body.ingredients.map(ing => {
+          return {
+            name: ing.name,
+            culinari_recipeIngredient: {
+              amount: ing.amount,
+              unit: ing.unit,
+            },
+          };
+        }),
+      },
+      { include: [{ model: Ingredient, as: fkName(Ingredient) }] }
+    );
+    await Step.bulkCreate(
+      [...req.body.instructions].map(item => {
+        item.recipe_id = recipe.id;
+        return item;
+      })
+    );
 
-  await Step.bulkCreate(
-    [...req.body.instructions].map(item => {
-      item.recipe_id = recipe.id;
-      return item;
-    })
-  );
+    const result = await Recipe.scope('includeForeignKeys').findOne({
+      where: { id: recipe.id },
+    });
 
-  const result = await Recipe.scope('includeForeignKeys').findOne({
-    where: { id: recipe.id },
-  });
-
-  return res.json(result);
+    return res.json(result);
+  } catch (error) {
+    if (error.name == 'SequelizeForeignKeyConstraintError') {
+      return res
+        .status(404)
+        .json({
+          errors: [{ param: 'forked_from', msg: 'No recipe with such id exists.' }],
+        });
+    } else {
+      return res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
+    }
+  }
 };
 
 const put = async (req, res) => {
@@ -113,8 +126,10 @@ const del = async (req, res) => {
 
 const post_like = async (req, res) => {
   try {
-    const existing = await Like.findOne({where: {recipe_id: req.params.id, user_id: req.user.id}})
-    if(existing) {
+    const existing = await Like.findOne({
+      where: { recipe_id: req.params.id, user_id: req.user.id },
+    });
+    if (existing) {
       // Dislike Recipe
       existing.destroy();
       return res.json({ OP: 'DEL' });
@@ -124,9 +139,9 @@ const post_like = async (req, res) => {
       recipe_id: req.params.id,
       user_id: req.user.id,
     });
-    return res.json({OP: 'POST', data: like});
+    return res.json({ OP: 'POST', data: like });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({ msg: 'Internal server error' });
   }
 };
@@ -138,18 +153,18 @@ const post_img = async (req, res, next) => {
         return {
           recipe_id: req.params.id,
           filename: file.filename,
-          order: i
-        }
-      })
-      await Picture.bulkCreate(imgs)
+          order: i,
+        };
+      });
+      await Picture.bulkCreate(imgs);
     }
-    res.status(200).json({msg:'ok'})
+    res.status(200).json({ msg: 'ok' });
     next();
   } catch (error) {
-    console.log(error)
-    next(error)
+    console.log(error);
+    next(error);
   }
-}
+};
 
 module.exports = {
   get_all,
