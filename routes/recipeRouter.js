@@ -66,7 +66,7 @@ router.route('/:id/img')
     param('id').custom(async (val) => await validation.recipeExists(val)),
     validation.solve,
     files.upload,
-    recipeController.post_img,
-    files.processImages)
+    files.processImages,
+    recipeController.post_img)
 
 module.exports = router;
