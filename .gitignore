@@ -118,6 +118,9 @@ dist
 .pnp.*
 
 
+static/*
+!static/.gitkeep
+
 uploads/*
 !uploads/.gitkeep
 thumbnails/*
