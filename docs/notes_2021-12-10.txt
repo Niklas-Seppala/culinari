@@ -1,0 +1,6 @@
+Database
+- Like table recipe id and user id as unique key pair
+- Many-to-many shopping cart approach to ingredient table
+- Add date field to Like table
+
+

@@ -112,44 +112,21 @@ const del = async (req, res) => {
 };
 
 const post_like = async (req, res) => {
-  const recipeId = req.params.id;
   try {
+    const existing = await Like.findOne({where: {recipe_id: req.params.id, user_id: req.user.id}})
+    if(existing) {
+      // Dislike Recipe
+      existing.destroy();
+      return res.json({ OP: 'DEL' });
+    }
+    // Like Recipe
     const like = await Like.create({
-      recipe_id: recipeId,
+      recipe_id: req.params.id,
       user_id: req.user.id,
     });
-    const newVal = await Like.findOne({where: {id: like.id}})
-
-    return res.json(newVal);
+    return res.json({OP: 'POST', data: like});
   } catch (error) {
-    if (error.name == 'SequelizeUniqueConstraintError') {
-      return res
-        .status(400)
-        .json({ errors: [{ param: 'recipeId', msg: 'Recipe has already been liked' }] });
-    }
-    return res.status(500).json({ msg: 'Internal server error' });
-  }
-};
-
-
-const del_like = async (req, res) => {
-  const recipeId = req.params.id;
-  try {
-    let like = await Like.findOne({
-      where: {
-        recipe_id: recipeId,
-        user_id: req.user.id,
-      },
-    });
-    if (like) {
-      await like.destroy();
-      return res.json({ msg: 'Succesfully unliked recipe' });
-    } else {
-      return res
-        .status(400)
-        .json({ errors: [{ param: '', msg: 'Could not unlike recipe.' }] });
-    }
-  } catch (error) {
+    console.log(error)
     return res.status(500).json({ msg: 'Internal server error' });
   }
 };
@@ -181,6 +158,5 @@ module.exports = {
   put,
   del,
   post_like,
-  del_like,
   post_img,
 };

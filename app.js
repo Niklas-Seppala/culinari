@@ -45,8 +45,8 @@ console.log(
 );
 
 app.use(express.json());
-app.use(express.urlencoded());
 app.use(cors());
+app.use(express.urlencoded());
 app.use(passport.initialize());
 app.enable('trust proxy');
 
@@ -54,7 +54,6 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 if (process.env.NODE_ENV === 'production') {
   console.log('Node env prod');
   require('./utils/production')(app, process.env.PORT, process.env.HTTP_PORT, options);
-  app.listen(process.env.HTTP_PORT);
 } else {
   console.log('Node env localhost');
   require('./utils/localhost')(

@@ -59,12 +59,6 @@ router
     validation.solve,
     recipeController.post_like
   )
-  .delete(
-    passport.authenticate('jwt', { session: false }),
-    param('id').custom(async (val) => await validation.recipeExists(val)),
-    validation.solve,
-    recipeController.del_like
-  );
 
 router.route('/:id/img')
   .post(
