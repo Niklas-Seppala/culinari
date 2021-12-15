@@ -47,10 +47,15 @@ const put = async (req, res) => {
 
 const del = async (req, res) => {
   try {
-    const comment = await Comment.findOne({ where: { id: req.params.id } });
-    comment.destroy();
-    return res.json({ msg: 'ok' });
+    const comment = await Comment.findOne({ where: { id: req.params.id, author_id: req.user.id } });
+    if (comment) {
+      comment.destroy();
+      return res.json({ msg: 'ok' });
+    } else {
+      return res.status(403).json({ errors: [{ msg: 'That is not your comment' }] })
+    }
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ errors: [{ msg: 'Internal server error' }] });
   }
 };
