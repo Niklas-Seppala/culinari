@@ -47,7 +47,14 @@ const put = async (req, res) => {
 
 const del = async (req, res) => {
   try {
-    const comment = await Comment.findOne({ where: { id: req.params.id, author_id: req.user.id } });
+    let whereParams = { id: req.params.id, author_id: req.user.id };
+
+    if(req.user.role == 1) {
+      // if user is admin, don't check the author id (allow admins to delete comments from everyone)
+      delete whereParams.author_id;
+    }
+
+    const comment = await Comment.findOne({ where: whereParams });
     if (comment) {
       comment.destroy();
       return res.json({ msg: 'ok' });
