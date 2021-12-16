@@ -31,7 +31,7 @@ const user_private_get = async (req, res) => {
     if (req.params.id !== req.user.id) 
       return res.status(403).json({errors: [{msg: 'forbidden'}]})
 
-    const user = await User.scope('includeRecipes').findOne({
+    const user = await User.scope('includeRecipesSecret').findOne({
       where: { id: req.user.id },
     });
     if (user) return res.json(user.dataValues);
