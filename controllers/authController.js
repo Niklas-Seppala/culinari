@@ -35,6 +35,11 @@ const login = (req, res) => {
 };
 
 const register = async (req, res) => {
+  /* #swagger.parameters['username'] = {in: 'body', example: "Markku23", description: 'The name of the user', type: 'string' } */
+  /* #swagger.parameters['email'] = {in: 'body', example: "matti@mail.com", description: 'The email of the user', type: 'string' } */
+  /* #swagger.parameters['password'] = {in: 'body', example: "pa55w0rd",description: 'The password of the user', type: 'string' } */
+  /* #swagger.parameters['confirm'] = {in: 'body', example: "pa55w0rd",description: 'The password of the user again', type: 'string' } */
+
   const salt = bcryptjs.genSaltSync(10);
   const hash = bcryptjs.hashSync(req.body.password, salt);
   const newUser = User.create({
