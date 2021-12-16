@@ -6,8 +6,8 @@ const User = require('../models/userModel.js');
 const Recipe = require('../models/recipeModel');
 
 const login = (req, res) => {
-  /* #swagger.parameters['username'] = {in: 'body', example: "password", description: 'The name of the user (e.g. Markku23)', type: 'string' } */
-  /* #swagger.parameters['password'] = {in: 'body', description: 'The password of the user', type: 'string' } */
+  /* #swagger.parameters['username'] = {in: 'body', example: "Markku23", description: 'The name of the user', type: 'string' } */
+  /* #swagger.parameters['password'] = {in: 'body', example: "pa55w0rd",description: 'The password of the user', type: 'string' } */
 
   // Validate login attempt.
   passport.authenticate('local', { session: false }, (err, user, info) => {
