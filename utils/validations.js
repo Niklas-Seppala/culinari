@@ -35,7 +35,6 @@ const commentExists = async (value) => {
   return value;
 }
 
-
 /**
  * 
  * @param {[]} value 
@@ -54,6 +53,12 @@ const arrayOfSize = (value, options) => {
 const recipeExists = async (value, res) => {
   const recipe = await Recipe.findOne({where: {id: value}})
   if (!recipe) throw Error('no recipe with that id exists')
+  return value
+}
+
+const userExist = async (value) => {
+  const user = await User.findOne({where: {id: value}})
+  if (!user) throw Error('no user with that id exists')
   return value
 }
 
@@ -95,4 +100,5 @@ module.exports = {
   arrayOfSize,
   recipeExists,
   canLike,
+  userExist
 };

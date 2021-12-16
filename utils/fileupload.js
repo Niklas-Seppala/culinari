@@ -1,7 +1,7 @@
 'use strict';
 const multer = require('multer');
 const path = require('path');
-const resize = require('../utils/resize')
+const resize = require('../utils/resize');
 
 const salt = () => Math.round(Math.random() * 1e9);
 const fname = file => `${Date.now()}-${salt()}${path.extname(file.originalname)}`;
@@ -28,19 +28,23 @@ const upload = multer({
   dest: './uploads/',
   fileFilter: fileFilter,
   storage: storage,
-}).array('img')
+});
 
-const processImages = (req, res, next) => {
+const processImages = async (req, res, next) => {
   try {
-    console.log(req.files)
-    req.files?.forEach(async file => {
-      await resize.make(file.filename, path.basename(file.filename))
-    }) 
+    if (req.files) {
+      console.log(req.files);
+      req.files?.forEach(async file => {
+        await resize.make(file.filename, path.basename(file.filename));
+      });
+    } else {
+      console.log(req.file);
+      await resize.make(req.file.filename, path.basename(req.file.filename));
+    }
     next();
   } catch (err) {
-    console.log(err)
-    next(err)
+    next(err);
   }
-}
+};
 
-module.exports = {upload, processImages};
+module.exports = { upload, processImages };
