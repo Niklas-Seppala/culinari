@@ -4,6 +4,8 @@ const sequelize = require('../database/sequelize_init.js');
 
 const fkName = require('../utils/fkName.js');
 const Recipe = require('../models/recipeModel');
+const Comment = require('./commentModel')
+const CommentLike = require('./commentLike')
 
 // define the table "user"
 class User extends Model {}
@@ -56,11 +58,35 @@ User.prototype.isAdmin = function() {
   console.log(values);
 };
 
-User.addScope('includeRecipes', {
+User.addScope('includeRecipesSecret', {
+  attributes: {
+    exclude: ['password'],
+  },
   include: [
     {
       attributes: {
-        exclude: ['password'],
+        include: ['text', 'id'],
+      },
+      model: Comment,
+      as: fkName(Comment),
+    },
+    {
+      attributes: {
+        include: ['name', 'desc', 'owner_id', 'forked_from',],
+      },
+      model: Recipe,
+      as: fkName(Recipe),
+    },
+  ],
+});
+
+User.addScope('includeRecipes', {
+  attributes: {
+    exclude: ['password', 'email'],
+  },
+  include: [
+    {
+      attributes: {
         include: ['name', 'desc', 'owner_id', 'forked_from'],
       },
       model: Recipe,
