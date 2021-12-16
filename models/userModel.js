@@ -35,8 +35,13 @@ User.init(
       field: 'score',
       allowNull: false,
     },
+    avatar: {
+      type: Sequelize.STRING,
+      field: 'avatar',
+      allowNull: true
+    }
   },
-{
+  {
     sequelize,
     freezeTableName: true,
     modelName: sequelize._TABLE_NAME_PREFIX + 'user',

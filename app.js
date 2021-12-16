@@ -81,7 +81,7 @@ app.use('/user', userRouter);
 app.use('/static', express.static('static'));
 
 app.use((err, req, res, next) => {
-  console.log('Error!');
+  console.log(err)
   const status = err.status || 500;
   res.status(status).json({ msg: err.msg || 'internal error' });
 });

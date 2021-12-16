@@ -2,10 +2,6 @@
 const User = require('../models/userModel');
 const Recipe = require('../models/recipeModel');
 const bcryptjs = require('bcryptjs');
-
-const { unlink } = require('fs');
-const path = require('path');
-
 const { deletePicturesFromRecipes } = require('../utils/deletePictures');
 
 const user_get = async (req, res) => {
@@ -22,25 +18,48 @@ const user_get = async (req, res) => {
         exclude: ['email'],
       },
     });
-    if (user) return res.json(user?.dataValues);
+    if (user) return res.json(user.dataValues);
     else return res.status(404).json({});
   } catch (error) {
     return res.status(500).json({ msg: 'internal error' });
   }
 };
 
-const user_update = async (req, res) => {
+const user_private_get = async (req, res) => {
+  console.log(req.params.id, req.user.id)
+  try {
+    if (req.params.id !== req.user.id) 
+      return res.status(403).json({errors: [{msg: 'forbidden'}]})
+
+    const user = await User.scope('includeRecipes').findOne({
+      where: { id: req.user.id },
+    });
+    if (user) return res.json(user.dataValues);
+    else return res.status(404).json({});
+  } catch (error) {
+    return res.status(500).json({ msg: 'internal error' });
+  }
+};
+
+const user_update_password = async (req, res) => {
   try {
     const salt = bcryptjs.genSaltSync(10);
     const hash = bcryptjs.hashSync(req.body.password, salt);
+    await User.update({ password: hash }, { where: { id: req.user.id } });
+    return res.json({ msg: 'success' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json('Internal server error');
+  }
+}
+
+const user_update = async (req, res) => {
+  try {
     const changes = {
       name: req.body.username,
       email: req.body.email,
-      password: hash,
     };
-    await User.update(changes, {
-      where: { id: req.user.id },
-    });
+    await User.update(changes, { where: { id: req.user.id } });
     return res.json({ msg: 'success' });
   } catch (error) {
     console.log(error);
@@ -89,9 +108,21 @@ const users_get = async (req, res) => {
   }
 };
 
+const user_img = async (req, res, next) => {
+  try {
+    await User.update({ avatar: req.file.filename}, { where: { id: req.user.id } })
+    res.json({msg: 'ok'})
+  } catch (err) {
+    next(err)
+  }
+}
+
 module.exports = {
   user_update,
   user_get,
+  user_private_get,
   users_get,
-  user_delete
+  user_delete,
+  user_img,
+  user_update_password
 };

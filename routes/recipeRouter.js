@@ -65,7 +65,7 @@ router.route('/:id/img')
     passport.authenticate('jwt', {session: false}),
     param('id').custom(async (val) => await validation.recipeExists(val)),
     validation.solve,
-    files.upload,
+    files.upload.array('img'),
     files.processImages,
     recipeController.post_img)
 
