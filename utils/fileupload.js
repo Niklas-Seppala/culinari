@@ -30,14 +30,16 @@ const upload = multer({
   storage: storage,
 }).array('img')
 
-const processImages = (req, res) => {
+const processImages = (req, res, next) => {
   try {
     console.log(req.files)
     req.files?.forEach(async file => {
       await resize.make(file.filename, path.basename(file.filename))
     }) 
+    next();
   } catch (err) {
     console.log(err)
+    next(err)
   }
 }
 
