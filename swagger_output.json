@@ -23,8 +23,8 @@
           {
             "name": "username",
             "in": "body",
-            "example": "password",
-            "description": "The name of the user (e.g. Markku23)",
+            "example": "Markku23",
+            "description": "The name of the user",
             "schema": {
               "type": "object",
               "properties": {}
@@ -33,6 +33,7 @@
           {
             "name": "password",
             "in": "body",
+            "example": "pa55w0rd",
             "description": "The password of the user",
             "schema": {
               "type": "object",
@@ -56,7 +57,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "obj",
+            "name": "username",
             "in": "body",
             "schema": {
               "type": "object",
@@ -71,6 +72,38 @@
                   "example": "any"
                 }
               }
+            },
+            "example": "Markku23",
+            "description": "The name of the user"
+          },
+          {
+            "name": "email",
+            "in": "body",
+            "example": "matti@mail.com",
+            "description": "The email of the user",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "example": "pa55w0rd",
+            "description": "The password of the user",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          {
+            "name": "confirm",
+            "in": "body",
+            "example": "pa55w0rd",
+            "description": "The password of the user again",
+            "schema": {
+              "type": "object",
+              "properties": {}
             }
           }
         ],

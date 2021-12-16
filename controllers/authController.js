@@ -6,8 +6,8 @@ const User = require('../models/userModel.js');
 const Recipe = require('../models/recipeModel');
 
 const login = (req, res) => {
-  /* #swagger.parameters['username'] = {in: 'body', example: "password", description: 'The name of the user (e.g. Markku23)', type: 'string' } */
-  /* #swagger.parameters['password'] = {in: 'body', description: 'The password of the user', type: 'string' } */
+  /* #swagger.parameters['username'] = {in: 'body', example: "Markku23", description: 'The name of the user', type: 'string' } */
+  /* #swagger.parameters['password'] = {in: 'body', example: "pa55w0rd",description: 'The password of the user', type: 'string' } */
 
   // Validate login attempt.
   passport.authenticate('local', { session: false }, (err, user, info) => {
@@ -35,6 +35,11 @@ const login = (req, res) => {
 };
 
 const register = async (req, res) => {
+  /* #swagger.parameters['username'] = {in: 'body', example: "Markku23", description: 'The name of the user', type: 'string' } */
+  /* #swagger.parameters['email'] = {in: 'body', example: "matti@mail.com", description: 'The email of the user', type: 'string' } */
+  /* #swagger.parameters['password'] = {in: 'body', example: "pa55w0rd",description: 'The password of the user', type: 'string' } */
+  /* #swagger.parameters['confirm'] = {in: 'body', example: "pa55w0rd",description: 'The password of the user again', type: 'string' } */
+
   const salt = bcryptjs.genSaltSync(10);
   const hash = bcryptjs.hashSync(req.body.password, salt);
   const newUser = User.create({
