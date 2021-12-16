@@ -251,6 +251,24 @@ const post_img = async (req, res, next) => {
   }
 };
 
+const put_img = async (req, res, next) => {
+  try {
+    await Picture.destroy({where: {recipe_id: req.params.id}})
+    if (req.file) {
+      const img = {
+        recipe_id: req.params.id,
+        filename: req.file.filename,
+        order: 0,
+      };
+      await Picture.create(img);
+      res.status(200).json({msg: 'ok'});
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
 module.exports = {
   get_all,
   get_single,
@@ -259,4 +277,5 @@ module.exports = {
   del,
   post_like,
   post_img,
+  put_img
 };

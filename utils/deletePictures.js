@@ -13,11 +13,10 @@ const deletePicturesFromRecipes = (recipes) => {
 const deletePictures = (pictures) => {
   pictures.forEach((picture) => {
     console.log("DELETING", picture.dataValues.filename, "FROM RECIPE", picture.dataValues.recipe_id);
-    let delPath = path.join('./uploads', path.basename(picture.dataValues.filename))
+    const delPath = path.join('./uploads', path.basename(picture.dataValues.filename))
     unlink(delPath, (err) => {
       if(err) {
         console.log(`Cannot delete picture ${delPath}`, err)
-
       }
     });
   });
