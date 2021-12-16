@@ -10,7 +10,7 @@ const Picture = require('../models/pictureModel.js');
 const validation = require('../utils/validations');
 const { deletePicturesFromRecipes } = require('../utils/deletePictures');
 
-
+const {getExistingIngredients, getNewIngredients} = require('../utils/duplicateIngredients');
 
 const get_single = async (req, res) => {
   const recipe = await Recipe.scope('includeForeignKeys').findOne({
@@ -31,44 +31,18 @@ const post = async (req, res) => {
   try {
 
     console.log(req.body.ingredients.map(ing => ing.name))
-    // check which of the ingredients exist in the db already so we don't create duplicates
-    const existingIngredients = await Ingredient.findAll(
-      {
-        where: {
-          name: req.body.ingredients.map(ing => ing.name.trim())
-        }
-      }
-    );
 
-    // get unique existing ingredients in case there is something wrong with the db's state 
-    let ingredientsToAssociate = [];
-    let existingNames = [];
-
-    existingIngredients.forEach((ing) => {
-      if(!existingNames.includes(ing.dataValues.name)) {
-        const bodyIngredient = req.body.ingredients.find(ing => ing.name == ing.name);
-
-        // add the amount and unit data we got so we can add those to the RecipeIngredient table
-        ingredientsToAssociate.push({
-          amount: bodyIngredient.amount,
-          unit: bodyIngredient.unit,
-          culinariIngredientId: ing.id, //as were doing this manually, we must use this column name defined in the db
-        });
-        existingNames.push(ing.dataValues.name);
-      }
-    });
-
-    // only add the ingredients to the db that we can't just create M2M associations to
-    const ingredientsToCreate = req.body.ingredients.filter(ing => !existingNames.includes(ing.name));
-
-
+    const existingIngredients = await getExistingIngredients(req.body.ingredients);
+    const newIngredients =await  getNewIngredients(req.body.ingredients);
+    console.log("newIngredients", newIngredients)
+    console.log("existingIngredients", existingIngredients)
     const recipe = await Recipe.create(
       {
         name: req.body.name,
         desc: req.body.desc,
         owner_id: req.user.id,
         forked_from: req.body.forked_from || null,
-        ingredient: ingredientsToCreate.map(ing => {
+        ingredient: newIngredients.map(ing => {
           return {
             name: ing.name,
             culinari_recipeIngredient: {
@@ -84,7 +58,7 @@ const post = async (req, res) => {
 
     // bulk create the associations in the M2M table
     const recipeIngredients = await RecipeIngredient.bulkCreate(
-      ingredientsToAssociate.map(ing => {return {...ing, culinariRecipeId:recipe.id}})
+      existingIngredients.map(ing => {return {...ing, culinariRecipeId:recipe.id}})
     );
 
 
@@ -101,6 +75,7 @@ const post = async (req, res) => {
 
     return res.json(result);
   } catch (error) {
+    console.log(error);
     if (error.name == 'SequelizeForeignKeyConstraintError') {
       return res
         .status(404)
