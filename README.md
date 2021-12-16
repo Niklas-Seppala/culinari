@@ -16,6 +16,7 @@ $ openssl x509 -req -in certrequest.csr -signkey ssl-key.pem -out ssl-cert.pem
 * Run `npm install`
 * Create an empty database and a user for it
 * Fill the `.env` configuration file with the required information ([a template can be found](.env.template))
+* Run `npm run clear-and-initialize-database` to initialize the database
 * Run `node app.js`
 
 ### Production server
@@ -76,6 +77,7 @@ cp ca.csr /etc/pki/tls/private/ca.csr
 
 * Go back to the root of your Culinari repository
 * Run `npm install` to install your application
+* Run `npm run clear-and-initialize-database` to initialize the database
 * Run `node app.js` to run the backend
 * After the initial setup is done, you can daemonize it
 * Don't forget to change the admin profile's password after you've succesfully logged in
