@@ -79,5 +79,7 @@ cp ca.csr /etc/pki/tls/private/ca.csr
 * Run `npm install` to install your application
 * Run `npm run clear-and-initialize-database` to initialize the database
 * Run `node app.js` to run the backend
+* After the initial setup is done, you can daemonize it
+* Don't forget to change the admin profile's password after you've succesfully logged in
 
 Culinari's backend should work with most daemon managers compatible with node. We recommend using [PM2](https://pm2.keymetrics.io/)

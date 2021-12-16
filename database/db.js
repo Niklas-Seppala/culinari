@@ -6,9 +6,6 @@ const faker = require('faker');
 
 console.log('ASSOCIATE');
 
-//const Comment = require("../models/commentModel.js");
-//const Ingredient = require("../models/ingredientModel.js");
-//const Picture = require("../models/pictureModel.js");
 
 //Recipe.belongsTo(User);
 
@@ -60,9 +57,9 @@ const sync = async () => {
 
       // db is empty, insert fake data for testing/presentation purposes
       const admin_user = await User.create({
-        name: 'Leevi the Admin',
-        email: 'leevipp+admin@metropolia.fi', //test data, doesn't matter
-        password: bcryptjs.hashSync('password', 10), //test data, doesn't matter
+        name: 'Admin',
+        email: 'culinariadmin@mail.fi',
+        password: bcryptjs.hashSync(process.env.INITIAL_ADMIN_PASS, 10),
         role: 1,
         score: 0,
       });
