@@ -1,6 +1,7 @@
 'use strict';
 const Recipe = require('../models/recipeModel.js');
 const Ingredient = require('../models/ingredientModel.js');
+const RecipeIngredient = require('../models/recipeIngredientModel.js');
 const Step = require('../models/stepModel.js');
 const fkName = require('../utils/fkName');
 const Like = require('../models/likeModel.js');
@@ -28,13 +29,46 @@ const get_all = async (req, res) => {
 
 const post = async (req, res) => {
   try {
+
+    console.log(req.body.ingredients.map(ing => ing.name))
+    // check which of the ingredients exist in the db already so we don't create duplicates
+    const existingIngredients = await Ingredient.findAll(
+      {
+        where: {
+          name: req.body.ingredients.map(ing => ing.name.trim())
+        }
+      }
+    );
+
+    // get unique existing ingredients in case there is something wrong with the db's state 
+    let ingredientsToAssociate = [];
+    let existingNames = [];
+
+    existingIngredients.forEach((ing) => {
+      if(!existingNames.includes(ing.dataValues.name)) {
+        const bodyIngredient = req.body.ingredients.find(ing => ing.name == ing.name);
+
+        // add the amount and unit data we got so we can add those to the RecipeIngredient table
+        ingredientsToAssociate.push({
+          amount: bodyIngredient.amount,
+          unit: bodyIngredient.unit,
+          culinariIngredientId: ing.id, //as were doing this manually, we must use this column name defined in the db
+        });
+        existingNames.push(ing.dataValues.name);
+      }
+    });
+
+    // only add the ingredients to the db that we can't just create M2M associations to
+    const ingredientsToCreate = req.body.ingredients.filter(ing => !existingNames.includes(ing.name));
+
+
     const recipe = await Recipe.create(
       {
         name: req.body.name,
         desc: req.body.desc,
         owner_id: req.user.id,
         forked_from: req.body.forked_from || null,
-        ingredient: req.body.ingredients.map(ing => {
+        ingredient: ingredientsToCreate.map(ing => {
           return {
             name: ing.name,
             culinari_recipeIngredient: {
@@ -46,6 +80,14 @@ const post = async (req, res) => {
       },
       { include: [{ model: Ingredient, as: fkName(Ingredient) }] }
     );
+
+
+    // bulk create the associations in the M2M table
+    const recipeIngredients = await RecipeIngredient.bulkCreate(
+      ingredientsToAssociate.map(ing => {return {...ing, culinariRecipeId:recipe.id}})
+    );
+
+
     await Step.bulkCreate(
       [...req.body.instructions].map(item => {
         item.recipe_id = recipe.id;
