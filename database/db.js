@@ -99,7 +99,7 @@ const sync = async () => {
             owner_id: user.id,
             ingredient: ingredients,
           }, {include: [{model: Ingredient, as: fkName(Ingredient)}]});
-          console.log("Created ", recipe);
+
 
           // add pictures
           for (var k = 0; k < 3; k++) {
