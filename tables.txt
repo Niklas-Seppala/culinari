@@ -1,95 +1,204 @@
-CREATE TABLE `culinari_user` (
-  `user_id` int(3) NOT NULL,
+CREATE TABLE `user` (
+  `id` int(3) NOT NULL,
   `name` text NOT NULL,
   `email` text NOT NULL,
   `password` text NOT NULL,
   `role` int(1) NOT NULL DEFAULT '1',
   `score` int(3) NOT NULL DEFAULT '0',
-  PRIMARY KEY(`user_id)
+  PRIMARY KEY(`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO `culinari_user` (`user_id`, `name`, `email`, `password`, `role`, `score`) VALUES
+INSERT INTO `user` (`id`, `name`, `email`, `password`, `role`, `score`) VALUES
 (1, 'admin', 'admin@metropolia.fi', '1234', 0, 0),
 (2, 'Jane Doez', 'jane@metropolia.fi', '1234', 1, 0),
 (3, 'John Doe', 'john@metropolia.fi', '1234', 1, 0);
 
-ALTER TABLE `culinari_user`
-  MODIFY `user_id` int(3) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `user`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
 
 
-CREATE TABLE `culinari_recipe` (
-  `recipe_id` int(3) NOT NULL,
+CREATE TABLE `recipe` (
+  `id` int(3) NOT NULL,
   `name` text NOT NULL,
-  `description` text NOT NULL,
-  `forked` int(3) DEFAULT NULL,
+  `desc` text NOT NULL,
+  `forked_from` int(3) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `owner` int(3) NOT NULL,
-  `liked` int(3) DEFAULT '0',
-  PRIMARY KEY (`recipe_id`),
-  KEY `FK1` (`forked`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-ALTER TABLE `culinari_recipe`
-  MODIFY `recipe_id` int(3) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `recipe`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `recipe` (`id`, `name`, `desc`, `forked_from`, `date`, `owner`) VALUES
+(1, 'Chorizo & mozzarella gnocchi bake', 'Upgrade cheesy tomato pasta with gnocchi, chorizo and mozzarella for a comforting bake that makes an excellent midweek meal', NULL, '2021-08-04', 2),
+(2, 'Chicken butter', 'Fancy a healthy version of your favourite Friday night chicken curry? The chicken can be marinaded the day before so you can get ahead on your prep', NULL, '2021-08-14', 2),
+(3, 'Chiken pasta bake', 'Enjoy this gooey cheese and chicken pasta bake for the ultimate weekday family dinner. Serve straight from the dish with a dressed green salad', NULL, '2021-10-24', 2),
+(4, 'Teriyaki chicken', 'Try this easy, sticky Asian-style teriyaki chicken for a speedy weeknight supper – it takes just 20 minutes to make! Serve it with sticky rice and steamed greens', NULL, '2021-10-12', 2),
+(5, 'Thai fried prawn & pineapple ric', 'This quick, low calorie supper is perfect for a busy weeknight. Cook your rice in advance to get ahead - run it under cold water to chill quickly, then freeze in a food bag for up to one month', NULL, '2021-11-24', 2),
+(6, 'Piri-piri chicken with smashed sweet potatoes & broccoli', 'Serve up an easy one-pan traybake of piri-piri chicken with sweet potatoes and broccoli. As well as being simple to make, it delivers three of your 5-a-day', NULL, '2021-10-11', 2),
+(7, 'Frying pan pizza with aubergine, ricotta & mint', 'This recipe ensures a crispy-bottomed pizza without ever turning on the oven. It is easy, veggie and 2 of your 5-a-day', NULL, '2021-10-24', 2),
+(8, 'Easy huevos rancheros', 'An easy Mexican breakfast that will keep you going all morning, it is got everything you need to pep up your plate', NULL, '2021-10-12', 2),
+(9, 'Ultimate chorizo ciabatta', 'Crusty ciabatta, spicy chorizo, a generous dollop of pesto and sweet roasted peppers make a moreish combination. Serve warm for a quick supper you will really enjoy', NULL, '2021-10-10', 3),
+(10, 'Asian prawn & quinoa salad', 'This fresh salad is 3 of your 5-a-day. With zingy lime and a hit of chilli heat, it is also a great introduction to quinoa if you have not tried it before', NULL, '2021-10-24', 3);
 
 
-CREATE TABLE `culinari_ingredients` (
-  `ingredients_id` int(3) NOT NULL,
+CREATE TABLE `ingredient` (
+  `id` int(3) NOT NULL,
   `name` text NOT NULL,
   `amount` int(3) NOT NULL,
   `unit` text NOT NULL,
   `recipe_id` int(3) NOT NULL,
-  PRIMARY KEY (`ingredients_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-ALTER TABLE `culinari_ingredients`
-  MODIFY `ingredients_id` int(3) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `ingredient`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `ingredient` (`id`, `name`, `amount`, `unit`, `recipe_id`) VALUES
+(1, 'olive oil', 1, 'tbsp', 1),
+(2, 'onion', 1, 'chopped', 1),
+(3, 'garlic cloves', 1, 'bulb', 1),
+(4, 'chorizo', 120, 'g', 1),
+(5, 'tomato', 800, 'g', 1),
+(6, 'sugar', 1, 'tbsp', 1),
+(7, 'gnocchi', 600, 'g', 1),
+(8, 'mozzarella', 125, 'g', 1),
+(9, 'skinless boneless chicken thighs', 500, 'g', 2),
+(10, 'lemon', 1, 'ball', 2),
+(11, 'ground cumin', 2, 'tbsp', 2),
+(12, 'olive oil', 1, 'tsp', 2),
+(13, 'paprika', 2, 'tsp', 2),
+(14, 'hot chilli powder', 1, 'tsp', 2),
+(15, 'yogurt', 200, 'g', 2),
+(16, 'vegetable oil', 2, 'tbsp', 2),
+(17, 'onion', 1, 'chopped', 2),
+(18, 'garlic cloves', 3, 'bulb', 2),
+(19, 'garam masala', 1, 'tsp', 2),
+(20, 'ground fenugreek', 2, 'tsp', 2),
+(21, 'tomato purée', 3, 'tsp', 2),
+(22, 'chicken stock', 300, 'ml', 2),
+(23, 'olive oil', 4, 'tbsp', 3),
+(24, 'chicken stock', 300, 'ml', 3),
+(25, 'onion', 1, 'chopped', 3),
+(26, 'garlic cloves', 2, 'bulb', 3),
+(27, 'chilli flakes', 1, 'tsp', 3),
+(28, 'tomato', 800, 'g', 3),
+(29, 'sugar', 1, 'tsp', 3),
+(30, 'mascarpone', 6, 'tbsp', 3),
+(31, 'skinless chicken breasts', 4, 'pieces', 3),
+(32, 'penne', 300, 'g', 3),
+(33, 'cheddar', 70, 'g', 3),
+(34, 'mozzarella', 50, 'g', 3),
+(35, 'parsley', 1, 'bunch', 3),
+(36, 'sesame oil', 2, 'tbsp', 4),
+(37, 'skinless and boneless chicken thighs', 6, 'pieces', 4),
+(38, 'garlic cloves', 2, 'bulb', 4),
+(39, 'ginger', 1, 'pieces', 4),
+(40, 'runny honey', 50, 'g', 4),
+(41, 'soy sauce', 30, 'ml', 4),
+(42, 'rice wine vinegar', 1, 'tbsp', 4),
+(43, 'sesame seeds', 1, 'tbsp', 4),
+(44, 'onion', 4, 'chopped', 4),
+(45, 'sunflower oil', 2, 'tsp', 5),
+(46, 'pineapple', 140, 'g', 5),
+(47, 'Thai green curry paste', 3, 'tbsp', 5),
+(48, 'soy sauce', 4, 'tsp', 5),
+(49, 'cooked basmati rice', 300, 'g', 5),
+(50, 'eggs', 2, 'pieces', 5),
+(51, 'frozen peas', 140, 'g', 5),
+(52, 'can bamboo shoots', 225, 'g', 5),
+(53, 'frozen prawns', 250, 'g', 5);
 
 
-CREATE TABLE `culinari_comment` (
-  `comment_id` int(3) NOT NULL,
+CREATE TABLE `comment` (
+  `id` int(3) NOT NULL,
   `recipe_id` int(3) NOT NULL,
-  `user_id` int(3) NOT NULL,
+  `author_id` int(3) NOT NULL,
   `date` date NOT NULL,
-  `content` text NOT NULL,
-  PRIMARY KEY (`comment_id`)
+  `text` text NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-ALTER TABLE `culinari_comment`
-  MODIFY `comment_id` int(3) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `comment`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `comment` (`id`, `recipe_id`, `author_id`, `date`, `text`) VALUES
+(1, 1, 2, '2021-12-10', 'Great'),
+(2, 1, 3, '2021-12-12', 'Woderful'),
+(3, 2, 2, '2021-12-13', 'Good job'),
+(4, 2, 3, '2021-12-14', 'That is amazing'),
+(5, 3, 2, '2021-12-15', 'Like master chef'),
+(6, 3, 3, '2021-12-16', 'Congraguation'),
+(7, 4, 2, '2021-12-17', 'Liked'),
+(8, 4, 3, '2021-12-18', 'Great'),
+(9, 5, 2, '2021-12-19', 'Good');
 
 
-CREATE TABLE `culinari_picture` (
-  `picture_id` int(3) NOT NULL,
-  `name` text NOT NULL,
+CREATE TABLE `picture` (
+  `id` int(3) NOT NULL,
+  `filename` text NOT NULL,
   `recipe_id` int(3) NOT NULL,
-  `coor` text NOT NULL DEFAULT '[24.74,60.24]',
   `order` int(3) NOT NULL,
-  PRIMARY KEY (`picture_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-ALTER TABLE `culinari_picture`
-  MODIFY `picture_id` int(3) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `picture`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `picture` (`id`, `filename`, `recipe_id`, `order`) VALUES
+(1, 'photo_Chorizo & mozzarella gnocchi bake.jpg', 1, 1),
+(2, 'photo_CHICKEN BUTTER.jpg', 2, 1),
+(3, 'photo_Chiken pasta bake.jpg', 3, 1),
+(4, 'photo_Teriyaki chicken.jpg', 4, 1),
+(5, 'photo_Thai fried prawn.jpg', 5, 1);
 
 
-CREATE TABLE `culinari_step` (
-  `step_id` int(3) NOT NULL,
+CREATE TABLE `step` (
+  `id` int(3) NOT NULL,
   `content` text NOT NULL,
   `order` int(3) NOT NULL,
   `recipe_id` int(3) NOT NULL,
-  PRIMARY KEY (`step_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-ALTER TABLE `culinari_step`
-  MODIFY `step_id` int(3) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `step`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `step` (`id`, `content`, `order`, `recipe_id`) VALUES
+(1, 'Heat the oil in a medium pan over a medium heat. Fry the onion and garlic for 8-10 mins until soft. Add the chorizo and fry for 5 mins more. Tip in the tomatoes and sugar, and season. Bring to a simmer, then add the gnocchi and cook for 8 mins, stirring often, until soft. Heat the grill to high.', 1, 1),
+(2,'Stir ¾ of the mozzarella and most of the basil through the gnocchi. Divide the mixture between six ovenproof ramekins, or put in one baking dish. Top with the remaining mozzarella, then grill for 3 mins, or until the cheese is melted and golden. Season, scatter over the remaining basil and serve with green salad.', 2, 1),
+(3,'In a medium bowl, mix all the marinade ingredients with some seasoning. Chop the chicken into bite-sized pieces and toss with the marinade. Cover and chill in the fridge for 1 hr or overnight.', 1, 2),
+(4,'In a large, heavy saucepan, heat the oil. Add the onion, garlic, green chilli, ginger and some seasoning. Fry on a medium heat for 10 mins or until soft.', 2, 2),
+(5,'Add the spices with the tomato purée, cook for a further 2 mins until fragrant, then add the stock and marinated chicken. Cook for 15 mins, then add any remaining marinade left in the bowl. Simmer for 5 mins, then sprinkle with the toasted almonds. Serve with rice, naan bread, chutney, coriander and lime wedges, if you like.', 3, 2),
+(6,'Heat 2 tbsp of the oil in a pan over a medium heat and fry the onion gently for 10-12 mins. Add the garlic and chilli flakes and cook for 1 min. Tip in the tomatoes and sugar and season to taste. Simmer uncovered for 20 mins or until thickened, then stir through the mascarpone.', 1, 3),
+(7,'Heat 1 tbsp of oil in a non-stick frying pan. Season the chicken and fry for 5-7 mins or until the chicken is cooked through.', 2, 3),
+(8,'Heat the oven to 220C/200C fan/gas 7. Cook the penne following pack instructions. Drain and toss with the remaining oil. Tip the pasta into a medium sized ovenproof dish. Stir in the chicken and pour over the sauce. Top with the cheddar, mozzarella and parsley. Bake for 20 mins or until golden brown and bubbling.', 3, 3),
+(9,'Heat the oil in a non-stick pan over a medium heat. Add the chicken and fry for 7 mins, or until golden. Add the garlic and ginger and fry for 2 mins. Stir in the honey, soy sauce, vinegar and 100ml water. Bring to the boil and cook for 2 - 5 mins over a medium heat until the chicken is sticky and coated in a thick sauce.', 1, 4),
+(10,'Scatter over the spring onions and sesame seeds, then serve the chicken with the rice and steamed veg.', 1, 4),
+(11,'Heat the oil in a wok or non-stick frying pan and fry the spring onion whites for 2 mins until softened. Stir in the pepper for 1 min, followed by the pineapple for 1 min more, then stir in the green curry paste and soy sauce.', 1, 5),
+(12,'Add the rice, stir-frying until piping hot, then push the rice to one side of the pan and scramble the eggs on the other side. Stir the peas, bamboo shoots and prawns into the rice and eggs, then heat through for 2 mins until the prawns are hot and the peas tender. Finally, stir in the spring onion greens, lime juice and coriander, if using. Spoon into bowls and serve with extra lime wedges and soy sauce.', 2, 5);
 
 
-CREATE TABLE `culinari_like` (
-  `like_id` int(3) NOT NULL,
+CREATE TABLE `like` (
+  `id` int(3) NOT NULL,
   `recipe_id` int(3) NOT NULL,
   `user_id` int(3) NOT NULL,
-  PRIMARY KEY (`like_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-ALTER TABLE `culinari_like`
-  MODIFY `like_id` int(3) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `like`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO `like` (`id`, `recipe_id`, `user_id`) VALUES 
+(1, 1, 2),
+(2, 1, 3),
+(3, 2, 2),
+(4, 2, 3),
+(5, 3, 2),
+(6, 3, 3),
+(7, 4, 2),
+(8, 4, 3),
+(9, 5, 2),
+(10, 5, 3);
+
