@@ -37,8 +37,7 @@ const post = async (req, res) => {
 
     const existingIngredients = await getExistingIngredients(req.body.ingredients);
     const newIngredients = await getNewIngredients(req.body.ingredients);
-    console.log('newIngredients', newIngredients);
-    console.log('existingIngredients', existingIngredients);
+
     const recipe = await Recipe.create(
       {
         name: req.body.name,
@@ -66,10 +65,11 @@ const post = async (req, res) => {
     );
 
     await Step.bulkCreate(
-      [...req.body.instructions].map(item => {
-        item.recipe_id = recipe.id;
-        return item;
-      })
+      req.body.instructions.map(item => { return {
+        order: item.order,
+        recipe_id: recipe.id,
+        content: item.content
+      }})
     );
 
     const result = await Recipe.scope('includeForeignKeys').findOne({
