@@ -37,8 +37,7 @@ const post = async (req, res) => {
 
     const existingIngredients = await getExistingIngredients(req.body.ingredients);
     const newIngredients = await getNewIngredients(req.body.ingredients);
-    console.log('newIngredients', newIngredients);
-    console.log('existingIngredients', existingIngredients);
+
     const recipe = await Recipe.create(
       {
         name: req.body.name,
@@ -66,10 +65,11 @@ const post = async (req, res) => {
     );
 
     await Step.bulkCreate(
-      [...req.body.instructions].map(item => {
-        item.recipe_id = recipe.id;
-        return item;
-      })
+      req.body.instructions.map(item => { return {
+        order: item.order,
+        recipe_id: recipe.id,
+        content: item.content
+      }})
     );
 
     const result = await Recipe.scope('includeForeignKeys').findOne({
@@ -251,6 +251,24 @@ const post_img = async (req, res, next) => {
   }
 };
 
+const put_img = async (req, res, next) => {
+  try {
+    await Picture.destroy({where: {recipe_id: req.params.id}})
+    if (req.file) {
+      const img = {
+        recipe_id: req.params.id,
+        filename: req.file.filename,
+        order: 0,
+      };
+      await Picture.create(img);
+      res.status(200).json({msg: 'ok'});
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
 module.exports = {
   get_all,
   get_single,
@@ -259,4 +277,5 @@ module.exports = {
   del,
   post_like,
   post_img,
+  put_img
 };

@@ -51,22 +51,30 @@ router
 
   .delete(passport.authenticate('jwt', { session: false }), recipeController.del);
 
+router.route('/:id/like').post(
+  passport.authenticate('jwt', { session: false }),
+  param('id').custom(async val => await validation.recipeExists(val)),
+  validation.solve,
+  recipeController.post_like
+);
+
 router
-  .route('/:id/like')
+  .route('/:id/img')
   .post(
     passport.authenticate('jwt', { session: false }),
-    param('id').custom(async (val) => await validation.recipeExists(val)),
-    validation.solve,
-    recipeController.post_like
-  )
-
-router.route('/:id/img')
-  .post(
-    passport.authenticate('jwt', {session: false}),
-    param('id').custom(async (val) => await validation.recipeExists(val)),
+    param('id').custom(async val => await validation.recipeExists(val)),
     validation.solve,
     files.upload.array('img'),
     files.processImages,
-    recipeController.post_img)
+    recipeController.post_img
+  )
+  .put(
+    passport.authenticate('jwt', { session: false }),
+    param('id').custom(async val => await validation.recipeExists(val)),
+    validation.solve,
+    files.upload.single('img'),
+    files.processImages,
+    recipeController.put_img
+  );
 
 module.exports = router;

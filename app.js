@@ -35,7 +35,7 @@ const authRoute = require('./routes/authRoute.js');
 const resize = require('./utils/resize');
 
 resize.configure({
-  outDir: './static',
+  outDir: './uploads',
   srcDir: './uploads',
   dim: { x: 350, y: 300 },
 });
@@ -78,7 +78,7 @@ app.use('/recipe', recipeRouter);
 app.use('/comment', commentRouter);
 app.use('/ingredient', ingredientRouter);
 app.use('/user', userRouter);
-app.use('/static', express.static('static'));
+app.use('/uploads', express.static('uploads'));
 
 app.use((err, req, res, next) => {
   console.log(err)
